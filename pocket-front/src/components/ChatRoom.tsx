@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
 
@@ -11,8 +11,11 @@ interface Message {
   expand: { sentBy: { name: string } };
 }
 
-const ChatRoom = () => {
-  const { id } = useParams<{ id: string }>();
+interface Props {
+  channelId: string;
+}
+
+const ChatRoom = ({ channelId }: Props) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const navigate = useNavigate();
@@ -27,7 +30,7 @@ const ChatRoom = () => {
         const resultList = await pb
           .collection("messages")
           .getFullList<Message>({
-            filter: `channel='${id}'`,
+            filter: `channel='${channelId}'`,
             expand: "sentBy",
             sort: "created",
           });
@@ -39,20 +42,20 @@ const ChatRoom = () => {
     };
 
     fetchMessages();
-  }, [id]);
+  }, [channelId]);
 
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await pb.collection("messages").create({
         content: newMessage,
-        channel: id,
+        channel: channelId,
         sentBy: pb.authStore.model?.id,
       });
       setNewMessage("");
       // Fetch updated messages
       const resultList = await pb.collection("messages").getFullList<Message>({
-        filter: `channel='${id}'`,
+        filter: `channel='${channelId}'`,
         expand: "sentBy",
         sort: "created",
       });
@@ -65,13 +68,6 @@ const ChatRoom = () => {
 
   return (
     <div>
-      <Button
-        onClick={() => {
-          navigate("/channels");
-        }}
-      >
-        Back to Channels
-      </Button>
       <h2>Chat Room</h2>
       <ul>
         {messages.map((message) => (

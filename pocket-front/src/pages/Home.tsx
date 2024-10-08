@@ -1,18 +1,38 @@
+import ChannelsList from "@/components/ChannelsList";
+import ChatRoom from "@/components/ChatRoom";
+import SideMenu from "@/components/SideMenu";
+import { useState } from "react";
+
+export interface HomeState {
+  currentPage: 'channelGallery' | 'conversations';
+  channelId: string;
+}
+
 const Home = () => {
-  return (
-    <div className="flex columns-3 w-full">
-      <div className="w-full">
-        <h1>Home</h1>
-        <p>Home page content</p>
+
+  const [currentState, setCurrentState] = useState<HomeState>({currentPage: 'channelGallery', channelId: ''});
+
+  if (currentState.currentPage === 'channelGallery') {
+
+    return (
+      <div className="flex columns-2 w-full h-screen">
+        <SideMenu setCurrentState={setCurrentState} currentState={currentState}/>
+        <div className="w-full">
+          <ChannelsList setCurrentState={setCurrentState} currentState={currentState}/>
+        </div>
       </div>
-      <div className="w-full">
-        <h2>Channels</h2>
+    );
+  } else {
+    console.log("conversations");
+    return (
+      <div className="flex columns-3 w-full h-screen">
+        <SideMenu setCurrentState={setCurrentState} currentState={currentState} />
+        <div className="w-full">
+          <ChatRoom channelId={currentState.channelId} />
+        </div>
       </div>
-      <div className="w-full">
-        <h2>Chat Room</h2>
-      </div>
-    </div>
-  );
+    );
+  }
 };
 
 export default Home;

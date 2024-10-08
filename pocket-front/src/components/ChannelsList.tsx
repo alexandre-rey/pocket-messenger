@@ -1,18 +1,24 @@
-// src/components/ChannelsList.tsx
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
-import { Listbox, ListboxItem } from "@nextui-org/listbox";
+import { Card, CardBody } from "@nextui-org/card";
 
 import pb from "../pocketbase";
+import { HomeState } from "@/pages/Home";
 
 interface Channel {
   id: string;
   name: string;
+  userCount: number;
 }
 
-const ChannelsList = () => {
+interface Props {
+  setCurrentState: (newState: HomeState) => void;
+  currentState: HomeState;
+}
+
+const ChannelsList = ({ setCurrentState, currentState }: Props) => {
   const [channels, setChannels] = useState<Channel[]>([]);
   const [newChannel, setNewChannel] = useState("");
   const navigate = useNavigate();
@@ -21,16 +27,11 @@ const ChannelsList = () => {
     navigate("/");
   }
 
-  const logout = () => {
-    pb.authStore.clear();
-    navigate("/");
-  };
-
   useEffect(() => {
     const fetchChannels = async () => {
       try {
         const resultList = await pb
-          .collection("channels")
+          .collection("channelsOverview")
           .getFullList<Channel>();
 
         setChannels(resultList);
@@ -58,7 +59,7 @@ const ChannelsList = () => {
       });
       setNewChannel("");
       // Fetch updated channels
-      const resultList = await pb.collection("channels").getFullList<Channel>();
+      const resultList = await pb.collection("channelsOverview").getFullList<Channel>();
 
       setChannels(resultList);
     } catch (error) {
@@ -66,17 +67,25 @@ const ChannelsList = () => {
     }
   };
 
+  const joinChannel = (channelId: string) => {
+    pb.collection('channels').update(channelId, {
+      'users+': pb.authStore.model?.id 
+    });
+    setCurrentState({ currentPage: "conversations", channelId: channelId });
+  };
+
   return (
-    <div>
-      <Button onClick={() => logout()}>Logout</Button>
-      <h2>Channels</h2>
-      <Listbox>
+    <div className="w-full h-screen">
+      <div className="w-full flex columns-6">
         {channels.map((channel) => (
-          <ListboxItem key={channel.id}>
-            <Link to={`/channels/${channel.id}`}>{channel.name}</Link>
-          </ListboxItem>
+          <Card isBlurred key={channel.id} isPressable className="m-5">
+            <CardBody onClick={() => { joinChannel(channel.id) }}>
+              <p className="font-bold">{channel.name}</p>
+              <p className="italic">{channel.userCount} users</p>
+            </CardBody>
+          </Card>
         ))}
-      </Listbox>
+      </div>
       <Input
         placeholder="Channel name"
         type="text"
