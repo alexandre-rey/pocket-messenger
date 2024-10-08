@@ -79,14 +79,14 @@ const ChatRoom = ({ channelId, channelName }: Props) => {
           </Card>
         ))}
       </div>
-      <form onSubmit={sendMessage}>
+      <form onSubmit={sendMessage} className="flex p-2">
         <Input
           placeholder="Type your message"
           type="text"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
         />
-        <Button type="submit">Send</Button>
+        <Button type="submit" className="ml-2">Send</Button>
       </form>
     </div>
   );
