@@ -18,7 +18,7 @@ interface Props {
   currentState: HomeState;
 }
 
-const ChannelsList = ({ setCurrentState, currentState }: Props) => {
+const ChannelsList = ({ setCurrentState }: Props) => {
   const [channels, setChannels] = useState<Channel[]>([]);
   const [newChannel, setNewChannel] = useState("");
   const navigate = useNavigate();

@@ -4,15 +4,25 @@ import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
 
 import pb from "../pocketbase";
+import { useMatomo } from "@datapunt/matomo-tracker-react";
 
 const Login = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const navigate = useNavigate();
+  const { trackPageView } = useMatomo();
+
+  React.useEffect(() => {
+    trackPageView({
+      documentTitle: "Login",
+      href: "/",
+    })
+  }, []);
 
   if (pb.authStore.isValid) {
     navigate("/home");
   }
+
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
