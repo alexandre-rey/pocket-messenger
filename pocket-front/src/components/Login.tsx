@@ -11,7 +11,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   if (pb.authStore.isValid) {
-    navigate("/channels");
+    navigate("/home");
   }
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -19,7 +19,7 @@ const Login = () => {
     try {
       await pb.collection("users").authWithPassword(username, password);
       console.log("User logged in:", pb.authStore.model);
-      navigate("/channels");
+      navigate("/home");
     } catch (error) {
       console.error("Login failed", error);
     }
