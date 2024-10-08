@@ -67,11 +67,11 @@ const ChannelsList = ({ setCurrentState, currentState }: Props) => {
     }
   };
 
-  const joinChannel = (channelId: string) => {
+  const joinChannel = (channelId: string, channelName: string) => {
     pb.collection('channels').update(channelId, {
-      'users+': pb.authStore.model?.id 
+      'users+': pb.authStore.model?.id
     });
-    setCurrentState({ currentPage: "conversations", channelId: channelId });
+    setCurrentState({ currentPage: "conversations", channelId: channelId, channelName: channelName });
   };
 
   return (
@@ -79,7 +79,7 @@ const ChannelsList = ({ setCurrentState, currentState }: Props) => {
       <div className="w-full flex columns-6">
         {channels.map((channel) => (
           <Card isBlurred key={channel.id} isPressable className="m-5">
-            <CardBody onClick={() => { joinChannel(channel.id) }}>
+            <CardBody onClick={() => { joinChannel(channel.id, channel.name) }}>
               <p className="font-bold">{channel.name}</p>
               <p className="italic">{channel.userCount} users</p>
             </CardBody>

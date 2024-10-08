@@ -4,6 +4,7 @@ import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
 
 import pb from "../pocketbase";
+import { Card, CardBody, CardHeader } from "@nextui-org/card";
 
 interface Message {
   id: string;
@@ -13,9 +14,10 @@ interface Message {
 
 interface Props {
   channelId: string;
+  channelName: string;
 }
 
-const ChatRoom = ({ channelId }: Props) => {
+const ChatRoom = ({ channelId, channelName }: Props) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const navigate = useNavigate();
@@ -68,14 +70,15 @@ const ChatRoom = ({ channelId }: Props) => {
 
   return (
     <div>
-      <h2>Chat Room</h2>
-      <ul>
+      <h2 className="font-bold m-4">{channelName}</h2>
+      <div className="flex flex-col">
         {messages.map((message) => (
-          <li key={message.id}>
-            <strong>{message.expand.sentBy.name}</strong>: {message.content}
-          </li>
+          <Card key={message.id} className="m-2">
+            <CardHeader> <strong>{message.expand.sentBy.name}</strong></CardHeader>
+            <CardBody>{message.content}</CardBody>
+          </Card>
         ))}
-      </ul>
+      </div>
       <form onSubmit={sendMessage}>
         <Input
           placeholder="Type your message"
