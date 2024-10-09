@@ -11,7 +11,13 @@ import { CurrentStateContext } from "../state/state.context";
 interface Message {
   id: string;
   content: string;
-  expand: { sentBy: { name: string } };
+  expand: {
+    sentBy: {
+      id: string;
+      name: string;
+      avatar: string;
+    };
+  };
 }
 
 const ChatRoom = () => {
@@ -79,8 +85,17 @@ const ChatRoom = () => {
       <div className="flex flex-col">
         {messages.map((message) => (
           <Card key={message.id} className="m-2">
-            <CardHeader>
-              {" "}
+            <CardHeader className="flex">
+              <img
+                alt="avatar"
+                className="w-10 h-10 cover rounded-full"
+                src={
+                  "http://127.0.0.1:8090/api/files/users/" +
+                  message.expand.sentBy.id +
+                  "/" +
+                  message.expand.sentBy.avatar
+                }
+              />
               <strong>{message.expand.sentBy.name}</strong>
             </CardHeader>
             <CardBody>{message.content}</CardBody>
