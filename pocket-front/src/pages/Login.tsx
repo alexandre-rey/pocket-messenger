@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
+import { Card, CardBody, CardHeader } from "@nextui-org/card";
 
 import pb from "../pocketbase";
 
@@ -40,21 +41,32 @@ const Login = () => {
   };
 
   return (
-    <form onSubmit={handleLogin}>
-      <Input
-        placeholder="Username"
-        type="text"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <Input
-        placeholder="Password"
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <Button type="submit">Login</Button>
-    </form>
+    <div className="container mx-auto">
+      <Card className="mt-20">
+        <CardHeader>
+          <h2>Login</h2>
+        </CardHeader>
+        <CardBody>
+          <form onSubmit={handleLogin}>
+            <Input
+              className="mb-5"
+              placeholder="Username"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <Input
+              className="mb-5"
+              placeholder="Password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <Button type="submit">Login</Button>
+          </form>
+        </CardBody>
+      </Card>
+    </div>
   );
 };
 

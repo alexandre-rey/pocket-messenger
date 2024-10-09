@@ -1,18 +1,15 @@
 import { useMatomo } from "@datapunt/matomo-tracker-react";
-import { useEffect, useState } from "react";
+import { useEffect, useReducer } from "react";
+
+import { stateReducer } from "../state/reducer";
+import { CurrentStateContext, DispatchContext } from "../state/state.context";
 
 import ChannelsList from "@/components/ChannelsList";
 import ChatRoom from "@/components/ChatRoom";
 import SideMenu from "@/components/SideMenu";
 
-export interface HomeState {
-  currentPage: "channelGallery" | "conversations";
-  channelId: string;
-  channelName: string;
-}
-
 const Home = () => {
-  const [currentState, setCurrentState] = useState<HomeState>({
+  const [currentState, dispatch] = useReducer(stateReducer, {
     currentPage: "channelGallery",
     channelId: "",
     channelName: "",
@@ -27,39 +24,22 @@ const Home = () => {
     });
   }, []);
 
-  if (currentState.currentPage === "channelGallery") {
-    return (
-      <div className="flex columns-2 w-full h-screen">
-        <SideMenu
-          currentState={currentState}
-          setCurrentState={setCurrentState}
-        />
-        <div className="w-full">
-          <ChannelsList
-            currentState={currentState}
-            setCurrentState={setCurrentState}
-          />
+  return (
+    <CurrentStateContext.Provider value={currentState}>
+      <DispatchContext.Provider value={dispatch}>
+        <div className="flex columns-2 w-full h-screen">
+          <SideMenu />
+          <div className="w-full">
+            {currentState.currentPage === "channelGallery" ? (
+              <ChannelsList />
+            ) : (
+              <ChatRoom />
+            )}
+          </div>
         </div>
-      </div>
-    );
-  } else {
-    console.log("conversations");
-
-    return (
-      <div className="flex columns-3 w-full h-screen">
-        <SideMenu
-          currentState={currentState}
-          setCurrentState={setCurrentState}
-        />
-        <div className="w-full">
-          <ChatRoom
-            channelId={currentState.channelId}
-            channelName={currentState.channelName}
-          />
-        </div>
-      </div>
-    );
-  }
+      </DispatchContext.Provider>
+    </CurrentStateContext.Provider>
+  );
 };
 
 export default Home;

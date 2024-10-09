@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
@@ -6,8 +6,8 @@ import { Card, CardBody } from "@nextui-org/card";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 
 import pb from "../pocketbase";
-
-import { HomeState } from "@/pages/Home";
+import { DispatchContext } from "../state/state.context";
+import { Action, ActionType } from "../state/action";
 
 interface Channel {
   id: string;
@@ -15,16 +15,12 @@ interface Channel {
   userCount: number;
 }
 
-interface Props {
-  setCurrentState: (newState: HomeState) => void;
-  currentState: HomeState;
-}
-
-const ChannelsList = ({ setCurrentState }: Props) => {
+const ChannelsList = () => {
   const [channels, setChannels] = useState<Channel[]>([]);
   const [newChannel, setNewChannel] = useState("");
   const navigate = useNavigate();
   const { trackEvent } = useMatomo();
+  const dispatch = useContext(DispatchContext);
 
   if (!pb.authStore.isValid) {
     navigate("/");
@@ -55,6 +51,10 @@ const ChannelsList = ({ setCurrentState }: Props) => {
   };
 
   const createNewChannel = async () => {
+    if (newChannel === "") {
+      return;
+    }
+
     try {
       await pb.collection("channels").create({
         name: newChannel,
@@ -81,11 +81,17 @@ const ChannelsList = ({ setCurrentState }: Props) => {
       action: "channel-join",
       name: channelId,
     });
-    setCurrentState({
-      currentPage: "conversations",
-      channelId: channelId,
-      channelName: channelName,
-    });
+
+    const action: Action = {
+      type: ActionType.SET_CURRENT_STATE,
+      payload: {
+        currentPage: "conversations",
+        channelId: channelId,
+        channelName: channelName,
+      },
+    };
+
+    dispatch && dispatch(action);
   };
 
   return (

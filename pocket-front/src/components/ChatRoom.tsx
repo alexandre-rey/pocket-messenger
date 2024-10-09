@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
@@ -6,6 +6,7 @@ import { Card, CardBody, CardHeader } from "@nextui-org/card";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 
 import pb from "../pocketbase";
+import { CurrentStateContext } from "../state/state.context";
 
 interface Message {
   id: string;
@@ -13,16 +14,12 @@ interface Message {
   expand: { sentBy: { name: string } };
 }
 
-interface Props {
-  channelId: string;
-  channelName: string;
-}
-
-const ChatRoom = ({ channelId, channelName }: Props) => {
+const ChatRoom = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const navigate = useNavigate();
   const { trackEvent } = useMatomo();
+  const currentState = useContext(CurrentStateContext);
 
   if (!pb.authStore.isValid) {
     navigate("/");
@@ -34,7 +31,7 @@ const ChatRoom = ({ channelId, channelName }: Props) => {
         const resultList = await pb
           .collection("messages")
           .getFullList<Message>({
-            filter: `channel='${channelId}'`,
+            filter: `channel='${currentState.channelId}'`,
             expand: "sentBy",
             sort: "created",
           });
@@ -46,20 +43,20 @@ const ChatRoom = ({ channelId, channelName }: Props) => {
     };
 
     fetchMessages();
-  }, [channelId]);
+  }, [currentState.channelId]);
 
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await pb.collection("messages").create({
         content: newMessage,
-        channel: channelId,
+        channel: currentState.channelId,
         sentBy: pb.authStore.model?.id,
       });
       setNewMessage("");
       // Fetch updated messages
       const resultList = await pb.collection("messages").getFullList<Message>({
-        filter: `channel='${channelId}'`,
+        filter: `channel='${currentState.channelId}'`,
         expand: "sentBy",
         sort: "created",
       });
@@ -67,7 +64,7 @@ const ChatRoom = ({ channelId, channelName }: Props) => {
       trackEvent({
         category: "Channels",
         action: "message-send",
-        name: channelId,
+        name: currentState.channelId,
       });
 
       setMessages(resultList);
@@ -78,7 +75,7 @@ const ChatRoom = ({ channelId, channelName }: Props) => {
 
   return (
     <div>
-      <h2 className="font-bold m-4">{channelName}</h2>
+      <h2 className="font-bold m-4">{currentState.channelName}</h2>
       <div className="flex flex-col">
         {messages.map((message) => (
           <Card key={message.id} className="m-2">

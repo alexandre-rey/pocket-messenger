@@ -1,18 +1,17 @@
 import { Button } from "@nextui-org/button";
 import { useNavigate } from "react-router-dom";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
+import { useContext } from "react";
 
-import { HomeState } from "@/pages/Home";
+import { Action, ActionType } from "../state/action";
+import { DispatchContext } from "../state/state.context";
+
 import pb from "@/pocketbase";
 
-interface Props {
-  setCurrentState: (newState: HomeState) => void;
-  currentState: HomeState;
-}
-
-const SideMenu = ({ setCurrentState, currentState }: Props) => {
+const SideMenu = () => {
   const navigate = useNavigate();
   const { trackEvent } = useMatomo();
+  const dispatch = useContext(DispatchContext);
 
   const logout = () => {
     trackEvent({
@@ -25,10 +24,12 @@ const SideMenu = ({ setCurrentState, currentState }: Props) => {
   };
 
   const handleMenuClick = (page: "channelGallery" | "conversations") => {
-    setCurrentState({
-      ...currentState,
-      currentPage: page,
-    });
+    const action: Action = {
+      type: ActionType.SET_CURRENT_PAGE,
+      payload: page,
+    };
+
+    dispatch && dispatch(action);
   };
 
   return (
