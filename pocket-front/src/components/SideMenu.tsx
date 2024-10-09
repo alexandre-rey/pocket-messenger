@@ -1,5 +1,6 @@
 import { Button } from "@nextui-org/button";
 import { useNavigate } from "react-router-dom";
+import { useMatomo } from "@datapunt/matomo-tracker-react";
 
 import { HomeState } from "@/pages/Home";
 import pb from "@/pocketbase";
@@ -11,8 +12,14 @@ interface Props {
 
 const SideMenu = ({ setCurrentState, currentState }: Props) => {
   const navigate = useNavigate();
+  const { trackEvent } = useMatomo();
 
   const logout = () => {
+    trackEvent({
+      category: "User",
+      action: "logout",
+      name: pb.authStore.model?.username,
+    });
     pb.authStore.clear();
     navigate("/");
   };

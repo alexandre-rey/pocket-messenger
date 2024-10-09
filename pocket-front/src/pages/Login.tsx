@@ -10,7 +10,7 @@ const Login = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const navigate = useNavigate();
-  const { trackPageView } = useMatomo();
+  const { trackPageView, trackEvent } = useMatomo();
 
   React.useEffect(() => {
     trackPageView({
@@ -28,6 +28,11 @@ const Login = () => {
     try {
       await pb.collection("users").authWithPassword(username, password);
       console.log("User logged in:", pb.authStore.model);
+      trackEvent({
+        category: "User",
+        action: "login",
+        name: username,
+      });
       navigate("/home");
     } catch (error) {
       console.error("Login failed", error);

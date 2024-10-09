@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
 import { Card, CardBody, CardHeader } from "@nextui-org/card";
+import { useMatomo } from "@datapunt/matomo-tracker-react";
 
 import pb from "../pocketbase";
 
@@ -21,6 +22,7 @@ const ChatRoom = ({ channelId, channelName }: Props) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const navigate = useNavigate();
+  const { trackEvent } = useMatomo();
 
   if (!pb.authStore.isValid) {
     navigate("/");
@@ -60,6 +62,12 @@ const ChatRoom = ({ channelId, channelName }: Props) => {
         filter: `channel='${channelId}'`,
         expand: "sentBy",
         sort: "created",
+      });
+
+      trackEvent({
+        category: "Channels",
+        action: "message-send",
+        name: channelId,
       });
 
       setMessages(resultList);

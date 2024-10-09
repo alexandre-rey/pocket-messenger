@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
 import { Card, CardBody } from "@nextui-org/card";
+import { useMatomo } from "@datapunt/matomo-tracker-react";
 
 import pb from "../pocketbase";
 
@@ -23,6 +24,7 @@ const ChannelsList = ({ setCurrentState }: Props) => {
   const [channels, setChannels] = useState<Channel[]>([]);
   const [newChannel, setNewChannel] = useState("");
   const navigate = useNavigate();
+  const { trackEvent } = useMatomo();
 
   if (!pb.authStore.isValid) {
     navigate("/");
@@ -73,6 +75,11 @@ const ChannelsList = ({ setCurrentState }: Props) => {
   const joinChannel = (channelId: string, channelName: string) => {
     pb.collection("channels").update(channelId, {
       "users+": pb.authStore.model?.id,
+    });
+    trackEvent({
+      category: "Channels",
+      action: "channel-join",
+      name: channelId,
     });
     setCurrentState({
       currentPage: "conversations",
