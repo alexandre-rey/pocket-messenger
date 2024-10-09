@@ -5,6 +5,7 @@ import { Input } from "@nextui-org/input";
 import { Card, CardBody } from "@nextui-org/card";
 
 import pb from "../pocketbase";
+
 import { HomeState } from "@/pages/Home";
 
 interface Channel {
@@ -59,7 +60,9 @@ const ChannelsList = ({ setCurrentState }: Props) => {
       });
       setNewChannel("");
       // Fetch updated channels
-      const resultList = await pb.collection("channelsOverview").getFullList<Channel>();
+      const resultList = await pb
+        .collection("channelsOverview")
+        .getFullList<Channel>();
 
       setChannels(resultList);
     } catch (error) {
@@ -68,18 +71,26 @@ const ChannelsList = ({ setCurrentState }: Props) => {
   };
 
   const joinChannel = (channelId: string, channelName: string) => {
-    pb.collection('channels').update(channelId, {
-      'users+': pb.authStore.model?.id
+    pb.collection("channels").update(channelId, {
+      "users+": pb.authStore.model?.id,
     });
-    setCurrentState({ currentPage: "conversations", channelId: channelId, channelName: channelName });
+    setCurrentState({
+      currentPage: "conversations",
+      channelId: channelId,
+      channelName: channelName,
+    });
   };
 
   return (
     <div className="w-full h-screen">
       <div className="w-full flex columns-6">
         {channels.map((channel) => (
-          <Card isBlurred key={channel.id} isPressable className="m-5">
-            <CardBody onClick={() => { joinChannel(channel.id, channel.name) }}>
+          <Card key={channel.id} isBlurred isPressable className="m-5">
+            <CardBody
+              onClick={() => {
+                joinChannel(channel.id, channel.name);
+              }}
+            >
               <p className="font-bold">{channel.name}</p>
               <p className="italic">{channel.userCount} users</p>
             </CardBody>

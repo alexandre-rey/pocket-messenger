@@ -2,9 +2,9 @@ import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
+import { useMatomo } from "@datapunt/matomo-tracker-react";
 
 import pb from "../pocketbase";
-import { useMatomo } from "@datapunt/matomo-tracker-react";
 
 const Login = () => {
   const [username, setUsername] = useState<string>("");
@@ -16,13 +16,12 @@ const Login = () => {
     trackPageView({
       documentTitle: "Login",
       href: "/",
-    })
+    });
   }, []);
 
   if (pb.authStore.isValid) {
     navigate("/home");
   }
-
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

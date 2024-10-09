@@ -1,16 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
+import { MatomoProvider, createInstance } from "@datapunt/matomo-tracker-react";
 
 import App from "./App.tsx";
 import { Provider } from "./provider.tsx";
 import "@/styles/globals.css";
 
-import { MatomoProvider, createInstance } from '@datapunt/matomo-tracker-react'
-
-
 const instance = createInstance({
-  urlBase: 'https://pocketmessenger.matomo.cloud',
+  urlBase: "https://pocketmessenger.matomo.cloud",
   siteId: 1,
 });
 

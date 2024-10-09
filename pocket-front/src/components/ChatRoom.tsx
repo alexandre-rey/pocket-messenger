@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
+import { Card, CardBody, CardHeader } from "@nextui-org/card";
 
 import pb from "../pocketbase";
-import { Card, CardBody, CardHeader } from "@nextui-org/card";
 
 interface Message {
   id: string;
@@ -74,19 +74,24 @@ const ChatRoom = ({ channelId, channelName }: Props) => {
       <div className="flex flex-col">
         {messages.map((message) => (
           <Card key={message.id} className="m-2">
-            <CardHeader> <strong>{message.expand.sentBy.name}</strong></CardHeader>
+            <CardHeader>
+              {" "}
+              <strong>{message.expand.sentBy.name}</strong>
+            </CardHeader>
             <CardBody>{message.content}</CardBody>
           </Card>
         ))}
       </div>
-      <form onSubmit={sendMessage} className="flex p-2">
+      <form className="flex p-2" onSubmit={sendMessage}>
         <Input
           placeholder="Type your message"
           type="text"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
         />
-        <Button type="submit" className="ml-2">Send</Button>
+        <Button className="ml-2" type="submit">
+          Send
+        </Button>
       </form>
     </div>
   );
