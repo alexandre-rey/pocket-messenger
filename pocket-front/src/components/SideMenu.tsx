@@ -5,6 +5,7 @@ import { Action, ActionType } from "../state/action";
 import { DispatchContext } from "../state/state.context";
 
 import pb from "@/pocketbase";
+import "../styles/menu.css";
 
 const SideMenu = () => {
   const { trackEvent } = useMatomo();
@@ -17,6 +18,14 @@ const SideMenu = () => {
       name: pb.authStore.model?.username,
     });
     pb.authStore.clear();
+    const action: Action = {
+      type: ActionType.SET_LOGGED,
+      payload: {
+        isLogged: false,
+      },
+    };
+
+    dispatch && dispatch(action);
   };
 
   const handleMenuClick = (page: "channelGallery" | "conversations") => {
@@ -31,47 +40,33 @@ const SideMenu = () => {
   };
 
   return (
-    <div className="relative flex h-full w-full max-w-[10rem] flex-col rounded-xl bg-white bg-clip-border p-4 text-gray-700 shadow-xl shadow-blue-gray-900/5">
-      <nav className="flex min-w-[240px] flex-col gap-1 p-2 font-sans text-base font-normal text-blue-gray-700">
-        <div
-          className="flex items-center w-full p-3 leading-tight transition-all rounded-lg outline-none text-start hover:bg-blue-gray-50 hover:bg-opacity-80 hover:text-blue-gray-900 focus:bg-blue-gray-50 focus:bg-opacity-80 focus:text-blue-gray-900 active:bg-blue-gray-50 active:bg-opacity-80 active:text-blue-gray-900"
-          role="button"
-        >
+    <div className="menu_container">
+      <nav>
+        <div className="menu_button" role="button" >
           <button
             aria-label="Home"
-            className="grid mr-4 place-items-center"
             onClick={() => {
               handleMenuClick("channelGallery");
             }}
           >
-            <img alt="Home" className="w-5 h-5" src="/homeIcon.png" />
+            <img alt="Home" src="/homeIcon.png" />
           </button>
         </div>
-        <div
-          className="flex items-center w-full p-3 leading-tight transition-all rounded-lg outline-none text-start hover:bg-blue-gray-50 hover:bg-opacity-80 hover:text-blue-gray-900 focus:bg-blue-gray-50 focus:bg-opacity-80 focus:text-blue-gray-900 active:bg-blue-gray-50 active:bg-opacity-80 active:text-blue-gray-900"
-          role="button"
-        >
+        <div className="menu_button" role="button">
           <button
             aria-label="Conversations"
-            className="grid mr-4 place-items-center"
             onClick={() => {
               handleMenuClick("conversations");
             }}
           >
-            <img alt="Messages" className="w-5 h-5" src="/messageIcon.png" />
+            <img alt="Messages" src="/messageIcon.png" />
           </button>
         </div>
-        <div
-          className="flex items-center w-full p-3 leading-tight transition-all rounded-lg outline-none text-start hover:bg-blue-gray-50 hover:bg-opacity-80 hover:text-blue-gray-900 focus:bg-blue-gray-50 focus:bg-opacity-80 focus:text-blue-gray-900 active:bg-blue-gray-50 active:bg-opacity-80 active:text-blue-gray-900"
-          role="button"
-        >
-          <button
-            className="grid mr-4 place-items-center"
-            onClick={() => logout()}
-          >
+        <div className="menu_button" role="button">
+          <button onClick={() => logout()}>
             <svg
+            width={24}
               aria-hidden="true"
-              className="w-5 h-5"
               fill="currentColor"
               viewBox="0 0 24 24"
               xmlns="http://www.w3.org/2000/svg"

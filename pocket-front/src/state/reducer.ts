@@ -16,8 +16,12 @@ export function stateReducer(state: State, action: Action): State {
     case ActionType.SET_CURRENT_CHANNEL:
 
       if (action.payload.channelId !== undefined && action.payload.channelName !== undefined) {
+
+        const page = action.payload.currentPage || state.currentPage;
+
         return {
           ...state,
+          currentPage: page,
           channelId: action.payload.channelId,
           channelName: action.payload.channelName,
         };

@@ -72,14 +72,13 @@ const ChatRoom = () => {
 
   return (
     <div>
-      <h2 className="font-bold m-4">{currentState.channelName}</h2>
-      <div className="flex flex-col">
+      <h2>{currentState.channelName}</h2>
+      <div>
         {messages.map((message) => (
-          <div key={message.id} className="m-2">
-            <div className="flex">
+          <div key={message.id}>
+            <div>
               <img
                 alt="avatar"
-                className="w-10 h-10 cover rounded-full"
                 src={
                   "http://127.0.0.1:8090/api/files/users/" +
                   message.expand.sentBy.id +
@@ -93,14 +92,14 @@ const ChatRoom = () => {
           </div>
         ))}
       </div>
-      <form className="flex p-2" onSubmit={sendMessage}>
+      <form onSubmit={sendMessage}>
         <input
           placeholder="Type your message"
           type="text"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
         />
-        <button className="ml-2" type="submit">
+        <button type="submit">
           Send
         </button>
       </form>

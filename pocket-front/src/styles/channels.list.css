@@ -1,0 +1,79 @@
+.channels_container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.channels_gallery {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: left;
+    margin-top: 1rem;
+}
+
+.channel_card {
+    width: 10rem;
+    height: 10rem;
+    margin: 0.5rem;
+    border-radius: 10px;
+    background-color: var(--themed-bg-color);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.channel_card:hover {
+    transform: scale(1.05);
+}
+
+.channel_card:focus {
+    transform: scale(0.9);
+}
+
+.channel_card_title {
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--themed-text-color);
+    margin-top: 0.5rem;
+    text-align: center;
+    align-content: center;
+    height: 60px;
+}
+
+.channel_card_description {
+    font-size: 0.8rem;
+    color: var(--themed-text-color);
+    margin-top: 0.5rem;
+    text-align: center;
+}
+
+.channels_new_channel {
+    width: 20rem;
+    height: 10rem;
+    margin: 0.5rem;
+    border-radius: 10px;
+    background-color: var(--themed-bg-color);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.channels_new_channel > input {
+    width: 80%;
+    height: 2rem;
+    margin-top: 0.5rem;
+    border-radius: 5px;
+    border: 1px solid var(--themed-text-color);
+    padding: 0.5rem;
+    font-size: 1rem;
+    color: var(--themed-text-color);
+}

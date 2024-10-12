@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 
+import "../styles/channels.list.css";
 import pb from "../pocketbase";
 import { DispatchContext } from "../state/state.context";
 import { Action, ActionType } from "../state/action";
@@ -86,27 +87,32 @@ const ChannelsList = () => {
   };
 
   return (
-    <div className="w-full h-screen">
-      <div className="w-full flex columns-6">
+    <div className="channels_container">
+      <div className="channels_gallery">
         {channels.map((channel) => (
-          <div key={channel.id} className="m-5">
-            <div
-              onClick={() => {
-                joinChannel(channel.id, channel.name);
-              }}
-            >
-              <p className="font-bold">{channel.name}</p>
-              <p className="italic">{channel.userCount} users</p>
+          <div
+            key={channel.id}
+            onClick={() => {
+              joinChannel(channel.id, channel.name);
+            }}
+            className="channel_card"
+          >
+            <div className="channel_card_title">
+              <p>{channel.name}</p>
             </div>
+            <p className="channel_card_description" >{channel.userCount} users</p>
           </div>
         ))}
       </div>
-      <input
-        placeholder="Channel name"
-        type="text"
-        onChange={(e) => handleNewChannelName(e)}
-      />
-      <button onClick={() => createNewChannel()}>Create Channel</button>
+      <div className="channels_new_channel">
+        <input
+          placeholder="Channel name"
+          type="text"
+          value={newChannel}
+          onChange={(e) => handleNewChannelName(e)}
+        />
+        <button onClick={() => createNewChannel()}>Create Public Channel</button>
+      </div>
     </div>
   );
 };

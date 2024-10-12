@@ -4,6 +4,8 @@ import Home from "./pages/Home";
 import { CurrentStateContext, DispatchContext } from "./state/state.context";
 import { useReducer } from "react";
 import { stateReducer } from "./state/reducer";
+import pb from "./pocketbase";
+import { ActionType } from "./state/action";
 
 function App() {
 
@@ -13,6 +15,15 @@ function App() {
     channelName: "",
     isLogged: false,
   });
+
+  if (pb.authStore.model && pb.authStore.isValid && currentState.isLogged === false) {
+    dispatch({
+      type: ActionType.SET_LOGGED,
+      payload: {
+        isLogged: true,
+      },
+    });
+  }
 
   return (
     <CurrentStateContext.Provider value={currentState}>

@@ -19,15 +19,13 @@ const Home = () => {
 
   return (
 
-    <div className="flex columns-2 w-full h-screen">
+    <div className="container">
       <SideMenu />
-      <div className="w-full">
-        {currentState.currentPage === "channelGallery" ? (
-          <ChannelsList />
-        ) : (
-          <ChatRoom />
-        )}
-      </div>
+      {currentState.currentPage === "channelGallery" ? (
+        <ChannelsList />
+      ) : (
+        <ChatRoom />
+      )}
     </div>
   );
 };

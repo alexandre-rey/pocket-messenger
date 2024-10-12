@@ -1,0 +1,17 @@
+.login_modal {
+    padding: 1rem 5rem;
+    background-color: var(--themed-bg-color);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.login_modal > h2 {
+    text-align: center;
+}
+
+.login_modal > form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
