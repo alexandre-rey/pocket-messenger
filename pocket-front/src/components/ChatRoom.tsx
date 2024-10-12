@@ -3,10 +3,13 @@ import { useMatomo } from "@datapunt/matomo-tracker-react";
 
 import pb from "../pocketbase";
 import { CurrentStateContext } from "../state/state.context";
+import "../styles/chat.room.css";
+import { formatDateStr } from "@/utils";
 
 interface Message {
   id: string;
   content: string;
+  created: string;
   expand: {
     sentBy: {
       id: string;
@@ -71,14 +74,15 @@ const ChatRoom = () => {
   };
 
   return (
-    <div>
+    <div className="chatroom_container">
       <h2>{currentState.channelName}</h2>
-      <div>
+      <div className="chatroom_conversation">
         {messages.map((message) => (
-          <div key={message.id}>
-            <div>
+          <div key={message.id} className="chatroom_message_container">
+            <div className="chatroom_avatar_container">
               <img
                 alt="avatar"
+                className="avatar"
                 src={
                   "http://127.0.0.1:8090/api/files/users/" +
                   message.expand.sentBy.id +
@@ -86,13 +90,15 @@ const ChatRoom = () => {
                   message.expand.sentBy.avatar
                 }
               />
-              <strong>{message.expand.sentBy.name}</strong>
             </div>
-            <div>{message.content}</div>
+            <div className="chatroom_message">
+                <span className="chatroom_message_header"><strong>{message.expand.sentBy.name}</strong><p>{'  ' + formatDateStr(message.created)}</p></span>
+                <p className="chatroom_message_content">{message.content}</p>
+            </div>
           </div>
         ))}
       </div>
-      <form onSubmit={sendMessage}>
+      <form onSubmit={sendMessage} className="chatroom_send_message">
         <input
           placeholder="Type your message"
           type="text"
