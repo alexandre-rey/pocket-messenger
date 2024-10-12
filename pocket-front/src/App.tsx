@@ -14,6 +14,7 @@ function App() {
     channelId: "",
     channelName: "",
     isLogged: false,
+    username: "",
   });
 
   if (pb.authStore.model && pb.authStore.isValid && currentState.isLogged === false) {
@@ -21,6 +22,7 @@ function App() {
       type: ActionType.SET_LOGGED,
       payload: {
         isLogged: true,
+        username: pb.authStore.model.name
       },
     });
   }

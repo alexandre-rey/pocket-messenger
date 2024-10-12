@@ -33,6 +33,7 @@ export function stateReducer(state: State, action: Action): State {
           return {
             ...state,
             isLogged: action.payload.isLogged,
+            username: action.payload.username || "",
           };
         } else return state;
   }

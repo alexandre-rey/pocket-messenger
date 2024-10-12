@@ -5,6 +5,7 @@ export type Action = {
     channelId?: string;
     channelName?: string;
     isLogged?: boolean;
+    username?: string;
   }
 }
 

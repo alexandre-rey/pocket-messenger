@@ -29,6 +29,10 @@
     flex-direction: row;
 }
 
+.chatroom_avatar_container {
+    margin-top: 0.5rem; 
+}
+
 .chatroom_message {
     max-width: 60rem;
     margin: 0.5rem;
@@ -65,4 +69,9 @@
     align-items: center;
     margin-top: 1rem;
     margin-bottom: 2rem;
+}
+
+.own_message {
+    margin-right: 2rem;
+    align-self: flex-end;
 }

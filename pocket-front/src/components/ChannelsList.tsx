@@ -9,6 +9,8 @@ import { Action, ActionType } from "../state/action";
 interface Channel {
   id: string;
   name: string;
+  isActive: boolean;
+  isPublic: boolean;
   userCount: number;
 }
 
@@ -48,9 +50,10 @@ const ChannelsList = () => {
     }
 
     try {
-      await pb.collection("channels").create({
+      await pb.collection("channels").create<Channel>({
         name: newChannel,
         isPublic: true,
+        isActive: true,
       });
       setNewChannel("");
       // Fetch updated channels

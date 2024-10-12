@@ -24,6 +24,13 @@ const ChatRoom = () => {
   const [newMessage, setNewMessage] = useState("");
   const { trackEvent } = useMatomo();
   const currentState = useContext(CurrentStateContext);
+  const messagesListRef = React.useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (messagesListRef.current) {
+      messagesListRef.current.scrollTop = messagesListRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -76,9 +83,9 @@ const ChatRoom = () => {
   return (
     <div className="chatroom_container">
       <h2>{currentState.channelName}</h2>
-      <div className="chatroom_conversation">
+      <div className="chatroom_conversation" ref={messagesListRef}>
         {messages.map((message) => (
-          <div key={message.id} className="chatroom_message_container">
+          <div key={message.id} className={"chatroom_message_container" + (message.expand.sentBy.name === currentState.username ? " own_message" : "") }>
             <div className="chatroom_avatar_container">
               <img
                 alt="avatar"
