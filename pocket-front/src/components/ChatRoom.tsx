@@ -41,7 +41,7 @@ const ChatRoom = () => {
             filter: `channel='${currentState.channelId}'`,
             expand: "sentBy",
             sort: "created",
-          });
+          }); 
 
         setMessages(resultList);
       } catch (error) {
@@ -50,6 +50,24 @@ const ChatRoom = () => {
     };
 
     fetchMessages();
+
+    pb.collection('channels').subscribe(currentState.channelId, async (e) => {
+      console.log("Channel updated", e);
+      fetchMessages();
+    }).then(() => {
+      console.log("Subscribed to channel updates");
+    }).catch((error) => {
+      console.error("Failed to subscribe to channel updates", error);
+    });
+
+    return () => {
+      pb.collection('channels').unsubscribe(currentState.channelId).then(() => {
+        console.log("Unsubscribed from channel updates");
+      }).catch((error) => {
+        console.error("Failed to unsubscribe from channel updates", error);
+      });
+    }
+
   }, [currentState.channelId]);
 
   const sendMessage = async (e: React.FormEvent) => {
@@ -60,13 +78,13 @@ const ChatRoom = () => {
         channel: currentState.channelId,
         sentBy: pb.authStore.model?.id,
       });
-      setNewMessage("");
-      // Fetch updated messages
-      const resultList = await pb.collection("messages").getFullList<Message>({
-        filter: `channel='${currentState.channelId}'`,
-        expand: "sentBy",
-        sort: "created",
+
+      pb.collection("channels").update(currentState.channelId, {
+        lastMessage: new Date()
       });
+
+      setNewMessage("");
+
 
       trackEvent({
         category: "Channels",
@@ -74,18 +92,19 @@ const ChatRoom = () => {
         name: currentState.channelId,
       });
 
-      setMessages(resultList);
+
     } catch (error) {
       console.error("Failed to send message", error);
     }
   };
+
 
   return (
     <div className="chatroom_container">
       <h2>{currentState.channelName}</h2>
       <div className="chatroom_conversation" ref={messagesListRef}>
         {messages.map((message) => (
-          <div key={message.id} className={"chatroom_message_container" + (message.expand.sentBy.name === currentState.username ? " own_message" : "") }>
+          <div key={message.id} className={"chatroom_message_container" + (message.expand.sentBy.name === currentState.username ? " own_message" : "")}>
             <div className="chatroom_avatar_container">
               <img
                 alt="avatar"
@@ -99,8 +118,8 @@ const ChatRoom = () => {
               />
             </div>
             <div className="chatroom_message">
-                <span className="chatroom_message_header"><strong>{message.expand.sentBy.name}</strong><p>{'  ' + formatDateStr(message.created)}</p></span>
-                <p className="chatroom_message_content">{message.content}</p>
+              <span className="chatroom_message_header"><strong>{message.expand.sentBy.name}</strong><p>{'  ' + formatDateStr(message.created)}</p></span>
+              <p className="chatroom_message_content">{message.content}</p>
             </div>
           </div>
         ))}
