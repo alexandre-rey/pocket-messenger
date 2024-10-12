@@ -1,5 +1,3 @@
-import { Button } from "@nextui-org/button";
-import { useNavigate } from "react-router-dom";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 import { useContext } from "react";
 
@@ -9,7 +7,6 @@ import { DispatchContext } from "../state/state.context";
 import pb from "@/pocketbase";
 
 const SideMenu = () => {
-  const navigate = useNavigate();
   const { trackEvent } = useMatomo();
   const dispatch = useContext(DispatchContext);
 
@@ -20,13 +17,14 @@ const SideMenu = () => {
       name: pb.authStore.model?.username,
     });
     pb.authStore.clear();
-    navigate("/");
   };
 
   const handleMenuClick = (page: "channelGallery" | "conversations") => {
     const action: Action = {
       type: ActionType.SET_CURRENT_PAGE,
-      payload: page,
+      payload: {
+        currentPage: page,
+      },
     };
 
     dispatch && dispatch(action);
@@ -39,7 +37,7 @@ const SideMenu = () => {
           className="flex items-center w-full p-3 leading-tight transition-all rounded-lg outline-none text-start hover:bg-blue-gray-50 hover:bg-opacity-80 hover:text-blue-gray-900 focus:bg-blue-gray-50 focus:bg-opacity-80 focus:text-blue-gray-900 active:bg-blue-gray-50 active:bg-opacity-80 active:text-blue-gray-900"
           role="button"
         >
-          <Button
+          <button
             aria-label="Home"
             className="grid mr-4 place-items-center"
             onClick={() => {
@@ -47,13 +45,13 @@ const SideMenu = () => {
             }}
           >
             <img alt="Home" className="w-5 h-5" src="/homeIcon.png" />
-          </Button>
+          </button>
         </div>
         <div
           className="flex items-center w-full p-3 leading-tight transition-all rounded-lg outline-none text-start hover:bg-blue-gray-50 hover:bg-opacity-80 hover:text-blue-gray-900 focus:bg-blue-gray-50 focus:bg-opacity-80 focus:text-blue-gray-900 active:bg-blue-gray-50 active:bg-opacity-80 active:text-blue-gray-900"
           role="button"
         >
-          <Button
+          <button
             aria-label="Conversations"
             className="grid mr-4 place-items-center"
             onClick={() => {
@@ -61,13 +59,13 @@ const SideMenu = () => {
             }}
           >
             <img alt="Messages" className="w-5 h-5" src="/messageIcon.png" />
-          </Button>
+          </button>
         </div>
         <div
           className="flex items-center w-full p-3 leading-tight transition-all rounded-lg outline-none text-start hover:bg-blue-gray-50 hover:bg-opacity-80 hover:text-blue-gray-900 focus:bg-blue-gray-50 focus:bg-opacity-80 focus:text-blue-gray-900 active:bg-blue-gray-50 active:bg-opacity-80 active:text-blue-gray-900"
           role="button"
         >
-          <Button
+          <button
             className="grid mr-4 place-items-center"
             onClick={() => logout()}
           >
@@ -84,7 +82,7 @@ const SideMenu = () => {
                 fillRule="evenodd"
               />
             </svg>
-          </Button>
+          </button>
         </div>
       </nav>
     </div>

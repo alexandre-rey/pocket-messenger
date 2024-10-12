@@ -1,17 +1,15 @@
-import { useNavigate } from "react-router-dom";
-import React, { useState } from "react";
-import { Input } from "@nextui-org/input";
-import { Button } from "@nextui-org/button";
+import React, { useContext, useState } from "react";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
-import { Card, CardBody, CardHeader } from "@nextui-org/card";
 
 import pb from "../pocketbase";
+import { DispatchContext } from "@/state/state.context";
+import { Action, ActionType } from "@/state/action";
 
 const Login = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const navigate = useNavigate();
   const { trackPageView, trackEvent } = useMatomo();
+  const dispatch = useContext(DispatchContext);
 
   React.useEffect(() => {
     trackPageView({
@@ -19,10 +17,6 @@ const Login = () => {
       href: "/",
     });
   }, []);
-
-  if (pb.authStore.isValid) {
-    navigate("/home");
-  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,7 +28,15 @@ const Login = () => {
         action: "login",
         name: username,
       });
-      navigate("/home");
+      
+      const loginAction: Action = {
+        type: ActionType.SET_LOGGED,
+        payload: {
+          isLogged: true,
+        },
+      };
+
+      dispatch && dispatch(loginAction);
     } catch (error) {
       console.error("Login failed", error);
     }
@@ -42,30 +44,30 @@ const Login = () => {
 
   return (
     <div className="container mx-auto">
-      <Card className="mt-20">
-        <CardHeader>
+      <div className="mt-20">
+        <div>
           <h2>Login</h2>
-        </CardHeader>
-        <CardBody>
+        </div>
+        <div>
           <form onSubmit={handleLogin}>
-            <Input
+            <input
               className="mb-5"
               placeholder="Username"
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
-            <Input
+            <input
               className="mb-5"
               placeholder="Password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <Button type="submit">Login</Button>
+            <button type="submit">Login</button>
           </form>
-        </CardBody>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 };

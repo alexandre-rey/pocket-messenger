@@ -1,8 +1,4 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Button } from "@nextui-org/button";
-import { Input } from "@nextui-org/input";
-import { Card, CardBody, CardHeader } from "@nextui-org/card";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 
 import pb from "../pocketbase";
@@ -23,13 +19,8 @@ interface Message {
 const ChatRoom = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
-  const navigate = useNavigate();
   const { trackEvent } = useMatomo();
   const currentState = useContext(CurrentStateContext);
-
-  if (!pb.authStore.isValid) {
-    navigate("/");
-  }
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -84,8 +75,8 @@ const ChatRoom = () => {
       <h2 className="font-bold m-4">{currentState.channelName}</h2>
       <div className="flex flex-col">
         {messages.map((message) => (
-          <Card key={message.id} className="m-2">
-            <CardHeader className="flex">
+          <div key={message.id} className="m-2">
+            <div className="flex">
               <img
                 alt="avatar"
                 className="w-10 h-10 cover rounded-full"
@@ -97,21 +88,21 @@ const ChatRoom = () => {
                 }
               />
               <strong>{message.expand.sentBy.name}</strong>
-            </CardHeader>
-            <CardBody>{message.content}</CardBody>
-          </Card>
+            </div>
+            <div>{message.content}</div>
+          </div>
         ))}
       </div>
       <form className="flex p-2" onSubmit={sendMessage}>
-        <Input
+        <input
           placeholder="Type your message"
           type="text"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
         />
-        <Button className="ml-2" type="submit">
+        <button className="ml-2" type="submit">
           Send
-        </Button>
+        </button>
       </form>
     </div>
   );

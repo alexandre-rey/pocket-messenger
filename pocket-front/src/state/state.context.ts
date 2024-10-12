@@ -6,5 +6,6 @@ export const CurrentStateContext = createContext<State>({
   currentPage: "channelGallery",
   channelId: "",
   channelName: "",
+  isLogged: false,
 });
 export const DispatchContext = createContext<React.Dispatch<any> | null>(null);

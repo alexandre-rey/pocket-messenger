@@ -1,8 +1,4 @@
 import { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Button } from "@nextui-org/button";
-import { Input } from "@nextui-org/input";
-import { Card, CardBody } from "@nextui-org/card";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 
 import pb from "../pocketbase";
@@ -18,13 +14,8 @@ interface Channel {
 const ChannelsList = () => {
   const [channels, setChannels] = useState<Channel[]>([]);
   const [newChannel, setNewChannel] = useState("");
-  const navigate = useNavigate();
   const { trackEvent } = useMatomo();
   const dispatch = useContext(DispatchContext);
-
-  if (!pb.authStore.isValid) {
-    navigate("/");
-  }
 
   useEffect(() => {
     const fetchChannels = async () => {
@@ -83,7 +74,7 @@ const ChannelsList = () => {
     });
 
     const action: Action = {
-      type: ActionType.SET_CURRENT_STATE,
+      type: ActionType.SET_CURRENT_CHANNEL,
       payload: {
         currentPage: "conversations",
         channelId: channelId,
@@ -98,24 +89,24 @@ const ChannelsList = () => {
     <div className="w-full h-screen">
       <div className="w-full flex columns-6">
         {channels.map((channel) => (
-          <Card key={channel.id} isBlurred isPressable className="m-5">
-            <CardBody
+          <div key={channel.id} className="m-5">
+            <div
               onClick={() => {
                 joinChannel(channel.id, channel.name);
               }}
             >
               <p className="font-bold">{channel.name}</p>
               <p className="italic">{channel.userCount} users</p>
-            </CardBody>
-          </Card>
+            </div>
+          </div>
         ))}
       </div>
-      <Input
+      <input
         placeholder="Channel name"
         type="text"
         onChange={(e) => handleNewChannelName(e)}
       />
-      <Button onClick={() => createNewChannel()}>Create Channel</Button>
+      <button onClick={() => createNewChannel()}>Create Channel</button>
     </div>
   );
 };

@@ -1,20 +1,13 @@
 import { useMatomo } from "@datapunt/matomo-tracker-react";
-import { useEffect, useReducer } from "react";
-
-import { stateReducer } from "../state/reducer";
-import { CurrentStateContext, DispatchContext } from "../state/state.context";
+import { useContext, useEffect } from "react";
 
 import ChannelsList from "@/components/ChannelsList";
 import ChatRoom from "@/components/ChatRoom";
 import SideMenu from "@/components/SideMenu";
+import { CurrentStateContext } from "@/state/state.context";
 
 const Home = () => {
-  const [currentState, dispatch] = useReducer(stateReducer, {
-    currentPage: "channelGallery",
-    channelId: "",
-    channelName: "",
-  });
-
+  const currentState = useContext(CurrentStateContext);
   const { trackPageView } = useMatomo();
 
   useEffect(() => {
@@ -25,20 +18,17 @@ const Home = () => {
   }, []);
 
   return (
-    <CurrentStateContext.Provider value={currentState}>
-      <DispatchContext.Provider value={dispatch}>
-        <div className="flex columns-2 w-full h-screen">
-          <SideMenu />
-          <div className="w-full">
-            {currentState.currentPage === "channelGallery" ? (
-              <ChannelsList />
-            ) : (
-              <ChatRoom />
-            )}
-          </div>
-        </div>
-      </DispatchContext.Provider>
-    </CurrentStateContext.Provider>
+
+    <div className="flex columns-2 w-full h-screen">
+      <SideMenu />
+      <div className="w-full">
+        {currentState.currentPage === "channelGallery" ? (
+          <ChannelsList />
+        ) : (
+          <ChatRoom />
+        )}
+      </div>
+    </div>
   );
 };
 
