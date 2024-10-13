@@ -1,5 +1,7 @@
 import PocketBase from "pocketbase";
 
-const pb = new PocketBase("http://127.0.0.1:8090");
+export const BASE_URL = "https://pm.hibot.fr";
+
+const pb = new PocketBase(BASE_URL);
 
 export default pb;
