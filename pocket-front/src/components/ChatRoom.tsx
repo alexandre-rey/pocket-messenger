@@ -14,7 +14,7 @@ interface Message {
   expand: {
     sentBy: {
       id: string;
-      name: string;
+      username: string;
       avatar: string;
     };
   };
@@ -120,7 +120,7 @@ const ChatRoom = () => {
       <h2>{currentState.channelName}</h2>
       <div className='chatroom_conversation' ref={messagesListRef}>
         {messages.map((message) => (
-          <div key={message.id} className={'chatroom_message_container' + (message.expand.sentBy.name === currentState.username ? ' own_message' : '')}>
+          <div key={message.id} className={'chatroom_message_container' + (message.expand.sentBy.username === currentState.username ? ' own_message' : '')}>
             <div className='chatroom_avatar_container'>
               <img
                 alt='avatar'
@@ -134,7 +134,7 @@ const ChatRoom = () => {
               />
             </div>
             <div className='chatroom_message'>
-              <span className='chatroom_message_header'><strong>{message.expand.sentBy.name}</strong><p>{'  ' + formatDateStr(message.created)}</p></span>
+              <span className='chatroom_message_header'><strong>{message.expand.sentBy.username}</strong><p>{'  ' + formatDateStr(message.created)}</p></span>
               <p className='chatroom_message_content'>{message.content}</p>
             </div>
           </div>

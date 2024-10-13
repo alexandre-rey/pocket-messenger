@@ -5,6 +5,7 @@ import "../styles/channels.list.css";
 import pb from "../pocketbase";
 import { DispatchContext } from "../state/state.context";
 import { Action, ActionType } from "../state/action";
+import { PageType } from "@/state/state";
 
 interface Channel {
   id: string;
@@ -80,7 +81,7 @@ const ChannelsList = () => {
     const action: Action = {
       type: ActionType.SET_CURRENT_CHANNEL,
       payload: {
-        currentPage: "conversations",
+        currentPage: PageType.CONVERSATIONS,
         channelId: channelId,
         channelName: channelName,
       },

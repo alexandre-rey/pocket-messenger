@@ -1,7 +1,9 @@
+import { PageType } from "./state";
+
 export type Action = {
   type: ActionType;
   payload: {
-    currentPage?: "channelGallery" | "conversations";
+    currentPage?: PageType
     channelId?: string;
     channelName?: string;
     isLogged?: boolean;

@@ -6,11 +6,12 @@ import { useReducer } from "react";
 import { stateReducer } from "./state/reducer";
 import pb from "./pocketbase";
 import { ActionType } from "./state/action";
+import { PageType } from "./state/state";
 
 function App() {
 
   const [currentState, dispatch] = useReducer(stateReducer, {
-    currentPage: "channelGallery",
+    currentPage: PageType.CHANNEL_GALLERY,
     channelId: "",
     channelName: "",
     isLogged: false,

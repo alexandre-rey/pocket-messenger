@@ -6,6 +6,7 @@ import { DispatchContext } from "../state/state.context";
 
 import pb from "@/pocketbase";
 import "../styles/menu.css";
+import { PageType } from "@/state/state";
 
 const SideMenu = () => {
   const { trackEvent } = useMatomo();
@@ -28,7 +29,7 @@ const SideMenu = () => {
     dispatch && dispatch(action);
   };
 
-  const handleMenuClick = (page: "channelGallery" | "conversations") => {
+  const handleMenuClick = (page: PageType) => {
     const action: Action = {
       type: ActionType.SET_CURRENT_PAGE,
       payload: {
@@ -46,7 +47,7 @@ const SideMenu = () => {
           <button
             aria-label="Home"
             onClick={() => {
-              handleMenuClick("channelGallery");
+              handleMenuClick(PageType.CHANNEL_GALLERY);
             }}
           >
             <img alt="Home" src="/homeIcon.png" />
@@ -56,16 +57,26 @@ const SideMenu = () => {
           <button
             aria-label="Conversations"
             onClick={() => {
-              handleMenuClick("conversations");
+              handleMenuClick(PageType.CONVERSATIONS);
             }}
           >
             <img alt="Messages" src="/messageIcon.png" />
           </button>
         </div>
         <div className="menu_button" role="button">
+          <button
+            aria-label="Settings"
+            onClick={() => {
+              handleMenuClick(PageType.SETTINGS);
+            }}
+          >
+            <img alt="Settings" src="/settingsIcon.png" />
+          </button>
+        </div>
+        <div className="menu_button" role="button">
           <button onClick={() => logout()}>
             <svg
-            width={24}
+              width={24}
               aria-hidden="true"
               fill="currentColor"
               viewBox="0 0 24 24"
