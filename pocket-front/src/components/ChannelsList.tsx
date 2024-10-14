@@ -2,11 +2,11 @@ import { useContext, useEffect, useState } from "react";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 
 import "../styles/channels.list.css";
-import pb from "../pocketbase";
 import { DispatchContext } from "../state/state.context";
 import { Action, ActionType } from "../state/action";
 import { PageType } from "@/state/state";
 import { ChannelOverview } from "@/interfaces";
+import { PbUtils } from "@/pb.utils";
 
 const ChannelsList = () => {
   const [channels, setChannels] = useState<ChannelOverview[]>([]);
@@ -17,10 +17,7 @@ const ChannelsList = () => {
   useEffect(() => {
     const fetchChannels = async () => {
       try {
-        const resultList = await pb
-          .collection("channelsOverview")
-          .getFullList<ChannelOverview>();
-
+        const resultList = await PbUtils.getChannelsOverview()
         setChannels(resultList);
       } catch (error) {
         console.error("Failed to fetch channels", error);
@@ -44,17 +41,10 @@ const ChannelsList = () => {
     }
 
     try {
-      await pb.collection("channels").create<ChannelOverview>({
-        name: newChannel,
-        isPublic: true,
-        isActive: true,
-      });
+      await PbUtils.createChannel(newChannel);
       setNewChannel("");
       // Fetch updated channels
-      const resultList = await pb
-        .collection("channelsOverview")
-        .getFullList<ChannelOverview>();
-
+      const resultList = await PbUtils.getChannelsOverview();
       setChannels(resultList);
     } catch (error) {
       console.error("Failed to create channel", error);
@@ -62,9 +52,7 @@ const ChannelsList = () => {
   };
 
   const joinChannel = (channelId: string, channelName: string) => {
-    pb.collection("channels").update(channelId, {
-      "users+": pb.authStore.model?.id,
-    });
+    PbUtils.joinChannel(channelId);
     trackEvent({
       category: "Channels",
       action: "channel-join",

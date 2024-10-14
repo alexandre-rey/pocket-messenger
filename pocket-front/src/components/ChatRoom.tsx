@@ -1,19 +1,23 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useMatomo } from '@datapunt/matomo-tracker-react';
 
-import pb, { BASE_URL } from '../pocketbase';
+import { BASE_URL } from '../pocketbase';
 import { CurrentStateContext } from '../state/state.context';
 import '../styles/chat.room.css';
 import { formatDateStr } from '@/utils';
-import { UnsubscribeFunc } from 'pocketbase';
+import { RecordModel, RecordSubscription, UnsubscribeFunc } from 'pocketbase';
 import { Message } from '@/interfaces';
+import MembersList from './MembersList';
+import { Collections, PbUtils } from '@/pb.utils';
 
 const ChatRoom = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
+
   const { trackEvent } = useMatomo();
   const currentState = useContext(CurrentStateContext);
   const messagesListRef = React.useRef<HTMLDivElement>(null);
+
 
   useEffect(() => {
     if (messagesListRef.current) {
@@ -27,13 +31,7 @@ const ChatRoom = () => {
 
     const fetchMessages = async () => {
       try {
-        const resultList = await pb
-          .collection('messages')
-          .getFullList<Message>({
-            filter: `channel='${currentState.channelId}'`,
-            expand: 'sentBy',
-            sort: 'created',
-          });
+        const resultList = await PbUtils.getMessages(currentState.channelId);
 
         if (isSubscribed) {
           setMessages(resultList);
@@ -46,19 +44,19 @@ const ChatRoom = () => {
     fetchMessages();
     console.log('Subscribing to message updates for channel: ' + currentState.channelId);
 
-    pb.collection('channels')
-      .subscribe('*', function (e) {
-        console.log('Message updated', e);
-        if (e.record.id === currentState.channelId) {
-          fetchMessages();
-        }
-      })
+    const callback = (e: RecordSubscription<RecordModel>) => {
+      console.log('Message updated', e);
+      if (e.record.id === currentState.channelId) {
+        fetchMessages();
+      }
+    }
+
+    PbUtils.subscribeToCollection(Collections.CHANNELS, callback)
       .then((unsub) => {
         console.log('Subscribed to message updates');
         if (isSubscribed) {
           unsubscribe = unsub;
         } else {
-          // Si l'effet a déjà été nettoyé, désabonnez-vous immédiatement
           unsub();
         }
       })
@@ -79,15 +77,12 @@ const ChatRoom = () => {
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await pb.collection('messages').create({
-        content: newMessage,
-        channel: currentState.channelId,
-        sentBy: pb.authStore.model?.id,
-      });
 
-      pb.collection('channels').update(currentState.channelId, {
-        lastMessage: new Date()
-      });
+      if (newMessage === '') {
+        return;
+      }
+
+      await PbUtils.sendMessage(newMessage, currentState.channelId);
 
       setNewMessage('');
 
@@ -104,42 +99,45 @@ const ChatRoom = () => {
 
 
   return (
-    <div className='chatroom_container'>
-      <h2>{currentState.channelName}</h2>
-      <div className='chatroom_conversation' ref={messagesListRef}>
-        {messages.map((message) => (
-          <div key={message.id} className={'chatroom_message_container' + (message.expand.sentBy.username === currentState.username ? ' own_message' : '')}>
-            <div className='chatroom_avatar_container'>
-              <img
-                alt='avatar'
-                className='avatar'
-                src={
-                  BASE_URL + '/api/files/users/' +
-                  message.expand.sentBy.id +
-                  '/' +
-                  message.expand.sentBy.avatar
-                }
-              />
+    <>
+      <div className='chatroom_container'>
+        <h2>{currentState.channelName}</h2>
+        <div className='chatroom_conversation' ref={messagesListRef}>
+          {messages.map((message) => (
+            <div key={message.id} className={'chatroom_message_container' + (message.expand.sentBy.username === currentState.username ? ' own_message' : '')}>
+              <div className='chatroom_avatar_container'>
+                <img
+                  alt='avatar'
+                  className='avatar'
+                  src={
+                    BASE_URL + '/api/files/users/' +
+                    message.expand.sentBy.id +
+                    '/' +
+                    message.expand.sentBy.avatar
+                  }
+                />
+              </div>
+              <div className='chatroom_message'>
+                <span className='chatroom_message_header'><strong>{message.expand.sentBy.username}</strong><p>{'  ' + formatDateStr(message.created)}</p></span>
+                <p className='chatroom_message_content'>{message.content}</p>
+              </div>
             </div>
-            <div className='chatroom_message'>
-              <span className='chatroom_message_header'><strong>{message.expand.sentBy.username}</strong><p>{'  ' + formatDateStr(message.created)}</p></span>
-              <p className='chatroom_message_content'>{message.content}</p>
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
+        <form onSubmit={sendMessage} className='chatroom_send_message'>
+          <input
+            placeholder='Type your message'
+            type='text'
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+          />
+          <button type='submit'>
+            Send
+          </button>
+        </form>
       </div>
-      <form onSubmit={sendMessage} className='chatroom_send_message'>
-        <input
-          placeholder='Type your message'
-          type='text'
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-        />
-        <button type='submit'>
-          Send
-        </button>
-      </form>
-    </div>
+      <MembersList channelId={currentState.channelId} />
+    </>
   );
 };
 
