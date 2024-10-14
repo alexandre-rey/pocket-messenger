@@ -6,17 +6,10 @@ import pb from "../pocketbase";
 import { DispatchContext } from "../state/state.context";
 import { Action, ActionType } from "../state/action";
 import { PageType } from "@/state/state";
-
-interface Channel {
-  id: string;
-  name: string;
-  isActive: boolean;
-  isPublic: boolean;
-  userCount: number;
-}
+import { ChannelOverview } from "@/interfaces";
 
 const ChannelsList = () => {
-  const [channels, setChannels] = useState<Channel[]>([]);
+  const [channels, setChannels] = useState<ChannelOverview[]>([]);
   const [newChannel, setNewChannel] = useState("");
   const { trackEvent } = useMatomo();
   const dispatch = useContext(DispatchContext);
@@ -26,7 +19,7 @@ const ChannelsList = () => {
       try {
         const resultList = await pb
           .collection("channelsOverview")
-          .getFullList<Channel>();
+          .getFullList<ChannelOverview>();
 
         setChannels(resultList);
       } catch (error) {
@@ -51,7 +44,7 @@ const ChannelsList = () => {
     }
 
     try {
-      await pb.collection("channels").create<Channel>({
+      await pb.collection("channels").create<ChannelOverview>({
         name: newChannel,
         isPublic: true,
         isActive: true,
@@ -60,7 +53,7 @@ const ChannelsList = () => {
       // Fetch updated channels
       const resultList = await pb
         .collection("channelsOverview")
-        .getFullList<Channel>();
+        .getFullList<ChannelOverview>();
 
       setChannels(resultList);
     } catch (error) {

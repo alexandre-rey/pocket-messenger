@@ -4,17 +4,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import '../styles/settings.css';
 import { DispatchContext } from '@/state/state.context';
 import { Action, ActionType } from '@/state/action';
-
-interface UserProfile {
-    id: string;
-    username: string;
-    email: string;
-    password: string;
-    passwordConfirm: string;
-    oldPassword: string;
-    avatar: File | null;
-    verified: boolean;
-}
+import { UserProfile } from '@/interfaces';
 
 const Settings = () => {
     const [profile, setProfile] = useState<UserProfile>({

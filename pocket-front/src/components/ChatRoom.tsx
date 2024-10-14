@@ -6,19 +6,7 @@ import { CurrentStateContext } from '../state/state.context';
 import '../styles/chat.room.css';
 import { formatDateStr } from '@/utils';
 import { UnsubscribeFunc } from 'pocketbase';
-
-interface Message {
-  id: string;
-  content: string;
-  created: string;
-  expand: {
-    sentBy: {
-      id: string;
-      username: string;
-      avatar: string;
-    };
-  };
-}
+import { Message } from '@/interfaces';
 
 const ChatRoom = () => {
   const [messages, setMessages] = useState<Message[]>([]);

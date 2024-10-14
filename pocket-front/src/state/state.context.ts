@@ -1,9 +1,9 @@
 import { createContext } from 'react';
 
-import { State } from './state';
+import { PageType, State } from './state';
 
 export const CurrentStateContext = createContext<State>({
-  currentPage: 'channelGallery',
+  currentPage: PageType.CHANNEL_GALLERY,
   channelId: '',
   channelName: '',
   isLogged: false,
