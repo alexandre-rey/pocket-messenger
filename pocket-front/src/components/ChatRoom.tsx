@@ -129,6 +129,7 @@ const ChatRoom = () => {
         {currentState.channelId !== '' && (
           <form onSubmit={sendMessage} className='chatroom_send_message'>
             <input
+              className='chatroom_input'
               placeholder='Type your message'
               type='text'
               value={newMessage}

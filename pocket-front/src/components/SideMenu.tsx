@@ -4,9 +4,9 @@ import { useContext } from 'react';
 import { Action, ActionType } from '../state/action';
 import { CurrentStateContext, DispatchContext } from '../state/state.context';
 
-import pb from '@/pocketbase';
 import '../styles/menu.css';
 import { PageType } from '@/state/state';
+import { PbUtils } from '@/pb.utils';
 
 const SideMenu = () => {
   const { trackEvent } = useMatomo();
@@ -17,9 +17,9 @@ const SideMenu = () => {
     trackEvent({
       category: 'User',
       action: 'logout',
-      name: pb.authStore.model?.username,
+      name: PbUtils.getUsername(),
     });
-    pb.authStore.clear();
+    PbUtils.clearAuth();
     const action: Action = {
       type: ActionType.SET_LOGGED,
       payload: {

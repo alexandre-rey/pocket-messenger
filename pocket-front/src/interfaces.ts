@@ -27,6 +27,12 @@ export interface Message {
     };
 }
 
+export interface Member {
+    username: string;
+    id: string;
+    avatar: string;
+}
+
 export interface UserProfile {
     id: string;
     username: string;
@@ -35,7 +41,6 @@ export interface UserProfile {
     passwordConfirm: string;
     oldPassword: string;
     avatar: File | null;
-    verified: boolean;
 }
 
 export interface SignUpForm {

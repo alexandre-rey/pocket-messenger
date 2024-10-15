@@ -1,11 +1,11 @@
 import React, { useContext, useState } from "react";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
 
-import pb from "../pocketbase";
 import { DispatchContext } from "@/state/state.context";
 import { Action, ActionType } from "@/state/action";
 
 import "../styles/login.css";
+import { PbUtils } from "@/pb.utils";
 
 interface Props {
   setIsRegistering: (isRegistering: boolean) => void;
@@ -27,8 +27,8 @@ const Login = ({ setIsRegistering }: Props) => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await pb.collection("users").authWithPassword(username, password);
-      console.log("User logged in:", pb.authStore.model);
+      await PbUtils.login(username, password);
+      console.log("User logged in:", username);
       trackEvent({
         category: "User",
         action: "login",
@@ -39,7 +39,7 @@ const Login = ({ setIsRegistering }: Props) => {
         type: ActionType.SET_LOGGED,
         payload: {
           isLogged: true,
-          username: pb.authStore.model?.username || "",
+          username: PbUtils.getUsername(),
         },
       };
 

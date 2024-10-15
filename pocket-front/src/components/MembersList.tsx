@@ -1,33 +1,20 @@
-import { Channel } from "@/interfaces";
-import pb, { BASE_URL } from "@/pocketbase";
+import { Member } from "@/interfaces";
+import { BASE_URL } from "@/pocketbase";
 import { CurrentStateContext } from "@/state/state.context";
 import { useContext, useEffect, useState } from "react";
 
 import '../styles/members.list.css';
+import { PbUtils } from "@/pb.utils";
 
 const MembersList = () => {
 
     const currentState = useContext(CurrentStateContext);
-
-
-    const [members, setMembers] = useState<{ username: string, id: string, avatar: string }[]>([]);
+    
+    const [members, setMembers] = useState<Member[]>([]);
 
     useEffect(() => {
-        pb.collection<Channel>('channels').getOne(currentState.channelId).then((channel) => {
-            let filterStr = '';
-
-            for (let i = 0; i < channel.users.length; i++) {
-                filterStr += 'id=\'' + channel.users[i] + '\'' + (i === channel.users.length - 1 ? '' : ' || ');
-            }
-
-            console.log('Filter string:', filterStr);
-
-            pb.collection('usersOverview').getFullList<{ username: string, id: string, avatar: string }>({
-                filter: filterStr,
-            }).then((result) => {
-                console.log('Members:', result);
-                setMembers(result);
-            });
+        PbUtils.getChannelMembers(currentState.channelId).then((members) => {
+            setMembers(members);
         });
     }, [currentState.channelId]);
 

@@ -82,3 +82,11 @@
 .own_message > .chatroom_message {
     background-color: white;
 }
+
+.chatroom_send_message > input {
+    width: 90%;
+    height: 2rem;
+    padding: 0.25rem;
+    border-radius: 5px;
+    border: 1px solid var(--themed-text-color);
+}

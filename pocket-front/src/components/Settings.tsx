@@ -1,10 +1,10 @@
-import pb from '@/pocketbase';
 import React, { useState, useEffect, useContext } from 'react';
 
 import '../styles/settings.css';
 import { DispatchContext } from '@/state/state.context';
 import { Action, ActionType } from '@/state/action';
 import { UserProfile } from '@/interfaces';
+import { PbUtils } from '@/pb.utils';
 
 const Settings = () => {
     const [profile, setProfile] = useState<UserProfile>({
@@ -14,8 +14,7 @@ const Settings = () => {
         password: '',
         passwordConfirm: '',
         oldPassword: '',
-        avatar: null,
-        verified: false,
+        avatar: null
     });
 
     const [loading, setLoading] = useState(false);
@@ -27,7 +26,7 @@ const Settings = () => {
         // Récupérer les infos de l'utilisateur connecté
         const getProfile = async () => {
             try {
-                const user = (await pb.collection<UserProfile>('users').authRefresh()).record;
+                const user = await PbUtils.getUserProfile();
                 setProfile({
                     id: user.id,
                     username: user.username,
@@ -36,7 +35,6 @@ const Settings = () => {
                     passwordConfirm: '',
                     oldPassword: '',
                     avatar: null, // A gérer pour afficher l'avatar si nécessaire
-                    verified: user.verified || false,
                 });
             } catch (err) {
                 console.error(err);
@@ -69,25 +67,14 @@ const Settings = () => {
             return;
         }
 
-        const formData = new FormData();
-        formData.append('username', profile.username);
-        formData.append('email', profile.email);
-        formData.append('oldPassword', profile.oldPassword);
-        formData.append('password', profile.password);
-        formData.append('passwordConfirm', profile.passwordConfirm);
-
-        if (profile.avatar) {
-            formData.append('avatar', profile.avatar);
-        }
-
         try {
-            await pb.collection('users').update(profile.id, formData);
+            await PbUtils.updateUser(profile);
 
-            let action: Action = { type: ActionType.SET_LOGGED, payload: { isLogged: true, username: pb.authStore.model?.username } };
+            let action: Action = { type: ActionType.SET_LOGGED, payload: { isLogged: true, username: profile.username } };
 
             if (profile.password !== '' && profile.passwordConfirm !== '' && profile.oldPassword !== '') {
                 action = { type: ActionType.SET_LOGGED, payload: { isLogged: false } };
-                pb.authStore.clear();
+                PbUtils.clearAuth();
             }
 
             dispatch && dispatch(action);
