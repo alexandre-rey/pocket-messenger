@@ -3,8 +3,9 @@ import React, { useState, useEffect, useContext } from 'react';
 import '../styles/settings.css';
 import { DispatchContext } from '@/state/state.context';
 import { Action, ActionType } from '@/state/action';
-import { UserProfile } from '@/interfaces';
 import { PbUtils } from '@/pb.utils';
+import { UserProfile } from '@/interfaces/user.interface';
+import { useTranslation } from 'react-i18next';
 
 const Settings = () => {
     const [profile, setProfile] = useState<UserProfile>({
@@ -17,6 +18,7 @@ const Settings = () => {
         avatar: null
     });
 
+    const { t } = useTranslation();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
@@ -62,7 +64,7 @@ const Settings = () => {
         setSuccess(null);
 
         if (profile.password !== profile.passwordConfirm) {
-            setError('Les mots de passe ne correspondent pas');
+            setError(t('passwordMissmatch'));
             setLoading(false);
             return;
         }
@@ -79,9 +81,9 @@ const Settings = () => {
 
             dispatch && dispatch(action);
 
-            setSuccess('Profil mis à jour avec succès');
+            setSuccess(t('profileUpdated'));
         } catch (err) {
-            setError('Erreur lors de la mise à jour du profil');
+            setError(t('updateError'));
         } finally {
             setLoading(false);
         }
@@ -93,9 +95,9 @@ const Settings = () => {
                 <form onSubmit={handleSubmit} className='settings_form'>
                     <div
                         className='settings_profile_section'>
-                        <h3>Profile</h3>
+                        <h3>{t('profile')}</h3>
                         <div>
-                            <label>Username</label>
+                            <label>{t('username')}</label>
                             <input
                                 type="text"
                                 name="username"
@@ -104,7 +106,7 @@ const Settings = () => {
                             />
                         </div>
                         <div>
-                            <label>Email</label>
+                            <label>{t('email')}</label>
                             <input
                                 type="email"
                                 name="email"
@@ -125,10 +127,10 @@ const Settings = () => {
 
 
                     <div className='settings_password_section'>
-                        <h3>Change password</h3>
-                        <p className='settings_hint' >Leave empty if you don't want to change your password</p>
+                        <h3>{t('changePassword')}</h3>
+                        <p className='settings_hint' >{t('leaveEmptyPassword')}</p>
                         <div>
-                            <label>Old password</label>
+                            <label>{t('oldPassword')}</label>
                             <input
                                 type="password"
                                 name="oldPassword"
@@ -137,7 +139,7 @@ const Settings = () => {
                             />
                         </div>
                         <div>
-                            <label>New password</label>
+                            <label>{t('newPassword')}</label>
                             <input
                                 type="password"
                                 name="password"
@@ -146,7 +148,7 @@ const Settings = () => {
                             />
                         </div>
                         <div>
-                            <label>Confirm new password</label>
+                            <label>{t('confirmPassword')}</label>
                             <input
                                 type="password"
                                 name="passwordConfirm"
@@ -159,7 +161,7 @@ const Settings = () => {
                     {error && <p style={{ color: 'red' }}>{error}</p>}
                     {success && <p style={{ color: 'green' }}>{success}</p>}
                     <button type="submit" disabled={loading}>
-                        {loading ? 'Updating...' : 'Update Profile'}
+                        {loading ? t('updatingProfile') : t('updateProfile')}
                     </button>
                 </form>
             </div>

@@ -1,6 +1,7 @@
 import { RecordModel, RecordSubscription, UnsubscribeFunc } from "pocketbase";
-import { Channel, ChannelOverview, Member, Message, SignUpForm, UserProfile } from "./interfaces";
 import pb from "./pocketbase";
+import { Channel, ChannelOverview, Message } from "./interfaces/chat.interface";
+import { Member, SignUpForm, UserProfile } from "./interfaces/user.interface";
 
 export enum Collections {
     CHANNELS = "channels",

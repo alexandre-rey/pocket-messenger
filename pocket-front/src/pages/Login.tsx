@@ -6,6 +6,7 @@ import { Action, ActionType } from "@/state/action";
 
 import "../styles/login.css";
 import { PbUtils } from "@/pb.utils";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   setIsRegistering: (isRegistering: boolean) => void;
@@ -54,28 +55,30 @@ const Login = ({ setIsRegistering }: Props) => {
     setIsRegistering(true);
   };
 
+  const { t } = useTranslation();
+
   return (
     <div className="container center">
       <div className="login_modal">
-        <h2>Login</h2>
+        <h2>{t('login')}</h2>
         <form onSubmit={handleLogin}>
           <input
-            placeholder="Username"
+            placeholder={t('username')}
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
           <input
-            placeholder="Password"
+            placeholder={t('password')}
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <button type="submit">Login</button>
+          <button type="submit">{t('loginTitle')}</button>
         </form>
 
         <p>
-          Don't have an account? <a href="/" onClick={handleRegister}>Register</a>
+          {t('proposeRegister')} <a href="/" onClick={handleRegister}>{t('register')}</a>
         </p>
       </div>
     </div>

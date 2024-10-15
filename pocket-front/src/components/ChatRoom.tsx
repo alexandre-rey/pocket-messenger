@@ -2,18 +2,23 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useMatomo } from '@datapunt/matomo-tracker-react';
 
 import { BASE_URL } from '../pocketbase';
-import { CurrentStateContext } from '../state/state.context';
-import '../styles/chat.room.css';
-import { formatDateStr } from '@/utils';
 import { RecordModel, RecordSubscription, UnsubscribeFunc } from 'pocketbase';
-import { Message } from '@/interfaces';
-import MembersList from './MembersList';
 import { Collections, PbUtils } from '@/pb.utils';
+
+import { CurrentStateContext } from '../state/state.context';
+import { Message } from '@/interfaces/chat.interface';
+import { formatDateStr } from '@/utils';
+
+import MembersList from './MembersList';
 import ChannelsMenu from './ChannelsMenu';
+
+import '../styles/chat.room.css';
+import { useTranslation } from 'react-i18next';
 
 const ChatRoom = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
+  const { t } = useTranslation();
 
   const { trackEvent } = useMatomo();
   const currentState = useContext(CurrentStateContext);
@@ -130,13 +135,13 @@ const ChatRoom = () => {
           <form onSubmit={sendMessage} className='chatroom_send_message'>
             <input
               className='chatroom_input'
-              placeholder='Type your message'
+              placeholder={t('typeYourMessage')}
               type='text'
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
             />
             <button type='submit'>
-              Send
+              {t('send')}
             </button>
           </form>
         )}

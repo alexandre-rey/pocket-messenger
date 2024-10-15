@@ -1,8 +1,9 @@
-import { Channel } from "@/interfaces";
+import { Channel } from "@/interfaces/chat.interface";
 import { PbUtils } from "@/pb.utils";
 import { Action, ActionType } from "@/state/action";
 import { CurrentStateContext, DispatchContext } from "@/state/state.context";
 import { useContext, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 
 const ChannelsMenu = () => {
@@ -10,6 +11,7 @@ const ChannelsMenu = () => {
     const [joinedChannels, setJoinedChannels] = useState<Channel[]>([]);
     const currentState = useContext(CurrentStateContext);
     const dispatch = useContext(DispatchContext);
+    const { t } = useTranslation();
 
     useEffect(() => {
         PbUtils.getJoinedChannels().then((channels) => {
@@ -32,7 +34,7 @@ const ChannelsMenu = () => {
     return (
         <div className='menu_container alt_menu_container'>
             <div className='alt_menu_content'>
-                <h3>Channels</h3>
+                <h3>{t('channels')}</h3>
                 <div className='alt_menu_list'>
                     {joinedChannels.map((channel) => (
                         <div key={channel.id} className='alt_menu_item' onClick={() => handleClick(channel.id, channel.name)}>

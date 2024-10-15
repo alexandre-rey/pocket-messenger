@@ -3,6 +3,9 @@ import ReactDOM from "react-dom/client";
 import { MatomoProvider, createInstance } from "@datapunt/matomo-tracker-react";
 
 import App from "./App.tsx";
+
+import './i18n';
+
 import "@/styles/globals.css";
 
 const instance = createInstance({

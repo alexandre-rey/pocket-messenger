@@ -5,14 +5,16 @@ import "../styles/channels.list.css";
 import { DispatchContext } from "../state/state.context";
 import { Action, ActionType } from "../state/action";
 import { PageType } from "@/state/state";
-import { ChannelOverview } from "@/interfaces";
 import { PbUtils } from "@/pb.utils";
+import { ChannelOverview } from "@/interfaces/chat.interface";
+import { useTranslation } from "react-i18next";
 
 const ChannelsList = () => {
   const [channels, setChannels] = useState<ChannelOverview[]>([]);
   const [newChannel, setNewChannel] = useState("");
   const { trackEvent } = useMatomo();
   const dispatch = useContext(DispatchContext);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchChannels = async () => {
@@ -85,18 +87,18 @@ const ChannelsList = () => {
             <div className="channel_card_title">
               <p>{channel.name}</p>
             </div>
-            <p className="channel_card_description" >{channel.userCount} users</p>
+            <p className="channel_card_description" >{channel.userCount + ' ' + t('members')}</p>
           </div>
         ))}
       </div>
       <div className="channels_new_channel">
         <input
-          placeholder="Channel name"
+          placeholder={t('channelName')}
           type="text"
           value={newChannel}
           onChange={(e) => handleNewChannelName(e)}
         />
-        <button onClick={() => createNewChannel()}>Create Public Channel</button>
+        <button onClick={() => createNewChannel()}>{t('createPublicChannel')}</button>
       </div>
     </div>
   );
