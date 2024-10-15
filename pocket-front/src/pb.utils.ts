@@ -12,6 +12,7 @@ export enum Collections {
 }
 
 export class PbUtils {
+
     public static async getChannelsOverview(): Promise<ChannelOverview[]> {
         return await pb
             .collection(Collections.CHANNELS_OVERVIEW)
@@ -133,5 +134,33 @@ export class PbUtils {
                 return result;
             });
         });
+    }
+
+    public static async openPrivateChat(username: string, memberId: string): Promise<{ channelName: string, channelId: string }> {
+        const currentUsernames = [this.getUsername(), username];
+        const possibleNames = [currentUsernames.join('-'), currentUsernames.reverse().join('-')];
+
+        const channels = await pb.collection<Channel>(Collections.CHANNELS).getFullList<Channel>({
+            filter: `name='${possibleNames[0]}' || name='${possibleNames[1]}'`,
+        });
+
+        if (channels.length > 0) {
+            return {
+                channelName: channels[0].name,
+                channelId: channels[0].id,
+            };
+        }
+
+        const newChannel = await pb.collection<Channel>(Collections.CHANNELS).create<Channel>({
+            name: possibleNames[0],
+            isPublic: false,
+            isActive: true,
+            users: [pb.authStore.model?.id, memberId],
+        });
+
+        return {
+            channelName: newChannel.name,
+            channelId: newChannel.id,
+        };
     }
 }

@@ -25,7 +25,7 @@ const Settings = () => {
     const dispatch = useContext(DispatchContext);
 
     useEffect(() => {
-        // Récupérer les infos de l'utilisateur connecté
+        
         const getProfile = async () => {
             try {
                 const user = await PbUtils.getUserProfile();
