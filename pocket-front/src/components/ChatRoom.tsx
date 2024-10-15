@@ -9,6 +9,7 @@ import { RecordModel, RecordSubscription, UnsubscribeFunc } from 'pocketbase';
 import { Message } from '@/interfaces';
 import MembersList from './MembersList';
 import { Collections, PbUtils } from '@/pb.utils';
+import ChannelsMenu from './ChannelsMenu';
 
 const ChatRoom = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -100,6 +101,7 @@ const ChatRoom = () => {
 
   return (
     <>
+      <ChannelsMenu />
       <div className='chatroom_container'>
         <h2>{currentState.channelName}</h2>
         <div className='chatroom_conversation' ref={messagesListRef}>

@@ -1,5 +1,5 @@
 import { RecordModel, RecordSubscription, UnsubscribeFunc } from "pocketbase";
-import { ChannelOverview, Message } from "./interfaces";
+import { Channel, ChannelOverview, Message } from "./interfaces";
 import pb from "./pocketbase";
 
 export enum Collections {
@@ -60,5 +60,11 @@ export class PbUtils {
         pb.collection(Collections.CHANNELS).update(channelId, {
             lastMessage: new Date()
         });
+    }
+
+    public static async getJoinedChannels(): Promise<Channel[]> {
+        return pb.collection<Channel>(Collections.CHANNELS).getFullList<Channel>({
+            filter: 'users ~ \'' + pb.authStore.model?.id + '\'',
+        })
     }
 }

@@ -2,7 +2,7 @@ import { useMatomo } from '@datapunt/matomo-tracker-react';
 import { useContext } from 'react';
 
 import { Action, ActionType } from '../state/action';
-import { DispatchContext } from '../state/state.context';
+import { CurrentStateContext, DispatchContext } from '../state/state.context';
 
 import pb from '@/pocketbase';
 import '../styles/menu.css';
@@ -11,6 +11,7 @@ import { PageType } from '@/state/state';
 const SideMenu = () => {
   const { trackEvent } = useMatomo();
   const dispatch = useContext(DispatchContext);
+  const currentState = useContext(CurrentStateContext);
 
   const logout = () => {
     trackEvent({
@@ -41,7 +42,7 @@ const SideMenu = () => {
   };
 
   return (
-    <div className='menu_container'>
+    <div className={'menu_container' + (currentState.currentPage === PageType.CONVERSATIONS ? ' no_margin' : '')}>
       <nav>
         <div className='menu_button' role='button' >
           <button
