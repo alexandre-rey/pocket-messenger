@@ -13,7 +13,9 @@ export class PbUtils {
     public static async getChannelsOverview(): Promise<ChannelOverview[]> {
         return await pb
             .collection(Collections.CHANNELS_OVERVIEW)
-            .getFullList<ChannelOverview>();
+            .getFullList<ChannelOverview>({
+                sort: '-userCount'
+            });
     }
 
     public static async createChannel(channelName: string): Promise<void> {

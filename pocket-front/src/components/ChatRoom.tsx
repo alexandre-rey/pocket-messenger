@@ -126,17 +126,20 @@ const ChatRoom = () => {
             </div>
           ))}
         </div>
-        <form onSubmit={sendMessage} className='chatroom_send_message'>
-          <input
-            placeholder='Type your message'
-            type='text'
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-          />
-          <button type='submit'>
-            Send
-          </button>
-        </form>
+        {currentState.channelId !== '' && (
+          <form onSubmit={sendMessage} className='chatroom_send_message'>
+            <input
+              placeholder='Type your message'
+              type='text'
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+            />
+            <button type='submit'>
+              Send
+            </button>
+          </form>
+        )}
+
       </div>
       <MembersList />
     </>

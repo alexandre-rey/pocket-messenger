@@ -35,7 +35,7 @@ const MembersList = () => {
         <div className='menu_container alt_menu_container no_margin'>
             <div className='alt_menu_content'>
                 <h3>Members</h3>
-                <div className='members_list'>
+                <div className='alt_menu_list'>
                     {members.map((member) => (
                         <div key={member.id} className='alt_menu_item'>
                             <img

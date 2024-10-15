@@ -17,11 +17,13 @@
 
 .chatroom_conversation {
     width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: start  ;
     margin-top: 1rem;
-    overflow: scroll;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 .chatroom_message_container {

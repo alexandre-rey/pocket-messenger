@@ -33,7 +33,7 @@ const ChannelsMenu = () => {
         <div className='menu_container alt_menu_container'>
             <div className='alt_menu_content'>
                 <h3>Channels</h3>
-                <div className='members_list'>
+                <div className='alt_menu_list'>
                     {joinedChannels.map((channel) => (
                         <div key={channel.id} className='alt_menu_item' onClick={() => handleClick(channel.id, channel.name)}>
                             <p>{channel.name}</p>
