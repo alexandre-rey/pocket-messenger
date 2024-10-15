@@ -23,7 +23,7 @@ function App() {
       type: ActionType.SET_LOGGED,
       payload: {
         isLogged: true,
-        username: pb.authStore.model.name
+        username: pb.authStore.model.username
       },
     });
   }

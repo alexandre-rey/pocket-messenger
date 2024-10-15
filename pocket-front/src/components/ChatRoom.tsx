@@ -136,7 +136,7 @@ const ChatRoom = () => {
           </button>
         </form>
       </div>
-      <MembersList channelId={currentState.channelId} />
+      <MembersList />
     </>
   );
 };

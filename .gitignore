@@ -26,3 +26,6 @@ dist-ssr
 
 # PocketBase
 pb_data
+
+# Rollup
+stats.html

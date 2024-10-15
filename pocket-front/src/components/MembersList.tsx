@@ -1,32 +1,33 @@
 import { Channel } from "@/interfaces";
 import pb, { BASE_URL } from "@/pocketbase";
-import { useState } from "react";
+import { CurrentStateContext } from "@/state/state.context";
+import { useContext, useEffect, useState } from "react";
 
-interface Props {
-    channelId: string;
-}
+const MembersList = () => {
 
-const MembersList = ({ channelId }: Props) => {
+    const currentState = useContext(CurrentStateContext);
+
+
     const [members, setMembers] = useState<{ username: string, id: string, avatar: string }[]>([]);
 
-    pb.collection<Channel>('channels').getOne(channelId).then((channel) => {
-        let filterStr = '';
+    useEffect(() => {
+        pb.collection<Channel>('channels').getOne(currentState.channelId).then((channel) => {
+            let filterStr = '';
 
-        for (let i = 0; i < channel.users.length; i++) {
-            filterStr += 'id=\'' + channel.users[i] + '\'' + (i === channel.users.length - 1 ? '' : ' || ');
-        }
+            for (let i = 0; i < channel.users.length; i++) {
+                filterStr += 'id=\'' + channel.users[i] + '\'' + (i === channel.users.length - 1 ? '' : ' || ');
+            }
 
-        console.log('Filter string:', filterStr);
+            console.log('Filter string:', filterStr);
 
-        pb.collection('usersOverview').getFullList<{ username: string, id: string, avatar: string }>({
-            filter: filterStr,
-        }).then((result) => {
-            console.log('Members:', result);
-            setMembers(result);
+            pb.collection('usersOverview').getFullList<{ username: string, id: string, avatar: string }>({
+                filter: filterStr,
+            }).then((result) => {
+                console.log('Members:', result);
+                setMembers(result);
+            });
         });
-    });
-
-
+    }, [currentState.channelId]);
 
     return (
         <div className='menu_container members_container no_margin'>
