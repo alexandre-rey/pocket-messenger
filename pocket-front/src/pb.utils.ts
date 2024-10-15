@@ -1,5 +1,5 @@
 import { RecordModel, RecordSubscription, UnsubscribeFunc } from "pocketbase";
-import { Channel, ChannelOverview, Message } from "./interfaces";
+import { Channel, ChannelOverview, Message, SignUpForm } from "./interfaces";
 import pb from "./pocketbase";
 
 export enum Collections {
@@ -68,5 +68,18 @@ export class PbUtils {
         return pb.collection<Channel>(Collections.CHANNELS).getFullList<Channel>({
             filter: 'users ~ \'' + pb.authStore.model?.id + '\'',
         })
+    }
+
+    public static async registerUser(signUpForm: SignUpForm): Promise<void> {
+        const formData = new FormData();
+        formData.append('username', signUpForm.username);
+        formData.append('email', signUpForm.email);
+        formData.append('password', signUpForm.password);
+        if (signUpForm.avatar) {
+            formData.append('avatar', signUpForm.avatar);
+        }
+
+        await pb.collection('users').create(formData);
+
     }
 }

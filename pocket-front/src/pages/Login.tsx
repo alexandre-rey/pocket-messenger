@@ -7,7 +7,11 @@ import { Action, ActionType } from "@/state/action";
 
 import "../styles/login.css";
 
-const Login = () => {
+interface Props {
+  setIsRegistering: (isRegistering: boolean) => void;
+}
+
+const Login = ({ setIsRegistering }: Props) => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const { trackPageView, trackEvent } = useMatomo();
@@ -45,6 +49,11 @@ const Login = () => {
     }
   };
 
+  const handleRegister = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsRegistering(true);
+  };
+
   return (
     <div className="container center">
       <div className="login_modal">
@@ -64,6 +73,10 @@ const Login = () => {
           />
           <button type="submit">Login</button>
         </form>
+
+        <p>
+          Don't have an account? <a href="/" onClick={handleRegister}>Register</a>
+        </p>
       </div>
     </div>
   );

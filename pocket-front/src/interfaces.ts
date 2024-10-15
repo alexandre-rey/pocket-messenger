@@ -37,3 +37,11 @@ export interface UserProfile {
     avatar: File | null;
     verified: boolean;
 }
+
+export interface SignUpForm {
+    username: string;
+    email: string;
+    password: string;
+    passwordConfirm: string;
+    avatar: File | null;
+}

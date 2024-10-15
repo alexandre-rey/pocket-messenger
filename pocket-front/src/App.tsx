@@ -2,11 +2,12 @@ import Login from "./pages/Login";
 import Home from "./pages/Home";
 
 import { CurrentStateContext, DispatchContext } from "./state/state.context";
-import { useReducer } from "react";
+import { useReducer, useState } from "react";
 import { stateReducer } from "./state/reducer";
 import pb from "./pocketbase";
 import { ActionType } from "./state/action";
 import { PageType } from "./state/state";
+import Register from "./pages/Register";
 
 function App() {
 
@@ -17,6 +18,8 @@ function App() {
     isLogged: false,
     username: "",
   });
+
+  const [isRegistering, setIsRegistering] = useState(false);
 
   if (pb.authStore.model && pb.authStore.isValid && currentState.isLogged === false) {
     dispatch({
@@ -31,9 +34,11 @@ function App() {
   return (
     <CurrentStateContext.Provider value={currentState}>
       <DispatchContext.Provider value={dispatch}>
-        {currentState.isLogged ? <Home /> : <Login />}
-        </DispatchContext.Provider>
-      </CurrentStateContext.Provider>
+        {currentState.isLogged && (<Home />)}
+        {!currentState.isLogged && !isRegistering && (<Login setIsRegistering={setIsRegistering} />)}
+        {!currentState.isLogged && isRegistering && (<Register setIsRegistering={setIsRegistering} />)}
+      </DispatchContext.Provider>
+    </CurrentStateContext.Provider>
   )
 }
 
