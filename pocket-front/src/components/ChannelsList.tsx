@@ -1,13 +1,14 @@
 import { useContext, useEffect, useState } from "react";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
-
 import "../styles/channels.list.css";
+import { useTranslation } from "react-i18next";
+
 import { DispatchContext } from "../state/state.context";
 import { Action, ActionType } from "../state/action";
+
 import { PageType } from "@/state/state";
 import { PbUtils } from "@/pb.utils";
 import { ChannelOverview } from "@/interfaces/chat.interface";
-import { useTranslation } from "react-i18next";
 
 const ChannelsList = () => {
   const [channels, setChannels] = useState<ChannelOverview[]>([]);
@@ -19,7 +20,8 @@ const ChannelsList = () => {
   useEffect(() => {
     const fetchChannels = async () => {
       try {
-        const resultList = await PbUtils.getChannelsOverview()
+        const resultList = await PbUtils.getChannelsOverview();
+
         setChannels(resultList);
       } catch (error) {
         console.error("Failed to fetch channels", error);
@@ -47,6 +49,7 @@ const ChannelsList = () => {
       setNewChannel("");
       // Fetch updated channels
       const resultList = await PbUtils.getChannelsOverview();
+
       setChannels(resultList);
     } catch (error) {
       console.error("Failed to create channel", error);
@@ -77,28 +80,32 @@ const ChannelsList = () => {
     <div className="channels_container">
       <div className="channels_gallery">
         {channels.map((channel) => (
-          <div
+          <button
             key={channel.id}
+            className="channel_card"
             onClick={() => {
               joinChannel(channel.id, channel.name);
             }}
-            className="channel_card"
           >
             <div className="channel_card_title">
               <p>{channel.name}</p>
             </div>
-            <p className="channel_card_description" >{channel.userCount + ' ' + t('members')}</p>
-          </div>
+            <p className="channel_card_description">
+              {channel.userCount + " " + t("members")}
+            </p>
+          </button>
         ))}
       </div>
       <div className="channels_new_channel">
         <input
-          placeholder={t('channelName')}
+          placeholder={t("channelName")}
           type="text"
           value={newChannel}
           onChange={(e) => handleNewChannelName(e)}
         />
-        <button onClick={() => createNewChannel()}>{t('createPublicChannel')}</button>
+        <button onClick={() => createNewChannel()}>
+          {t("createPublicChannel")}
+        </button>
       </div>
     </div>
   );

@@ -70,6 +70,8 @@
 .alt_menu_item {
     display: flex;
     align-items: center;
+    background-color: transparent;
+    color: black;
 }
 
 .alt_menu_item:hover {
