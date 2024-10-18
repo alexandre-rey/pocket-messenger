@@ -1,8 +1,9 @@
 import { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { RecordSubscription, UnsubscribeFunc } from "pocketbase";
 
 import { Channel } from "@/interfaces/chat.interface";
-import { PbUtils } from "@/pb.utils";
+import { Collections, PbUtils } from "@/pb.utils";
 import { Action, ActionType } from "@/state/action";
 import { CurrentStateContext, DispatchContext } from "@/state/state.context";
 
@@ -17,6 +18,39 @@ const ChannelsMenu = () => {
       setJoinedChannels(channels);
     });
   }, [currentState.channel.id]);
+
+  const updateChannels = () => {
+    PbUtils.getJoinedChannels().then((channels) => {
+      setJoinedChannels(channels);
+    });
+  };
+
+  const callback = async (e: RecordSubscription<Channel>) => {
+    console.log("Message updated", e);
+    if (
+      e.action === "create" &&
+      e.record.users.includes((await PbUtils.getUserProfile()).id)
+    ) {
+      updateChannels();
+    }
+  };
+
+  useEffect(() => {
+    let isSubscribed = true;
+    let unsubscribe: UnsubscribeFunc | null = null;
+
+    const fetchChannels = async () => {
+      try {
+        const resultList = await PbUtils.getMessages(currentState.channel.id);
+
+        if (isSubscribed) {
+          setMessages(resultList);
+        }
+      } catch (error) {
+        console.error("Failed to fetch messages", error);
+      }
+    };
+  }, []);
 
   const handleClick = (channel: Channel) => {
     const action: Action = {
