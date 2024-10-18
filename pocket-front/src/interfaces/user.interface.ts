@@ -1,24 +1,23 @@
-
 export interface Member {
-    username: string;
-    id: string;
-    avatar: string;
+  username: string;
+  id: string;
+  avatar: string;
 }
 
 export interface UserProfile {
-    id: string;
-    username: string;
-    email: string;
-    password: string;
-    passwordConfirm: string;
-    oldPassword: string;
-    avatar: File | null;
+  id: string;
+  username: string;
+  email: string;
+  password: string;
+  passwordConfirm: string;
+  oldPassword: string;
+  avatar: File | null;
 }
 
 export interface SignUpForm {
-    username: string;
-    email: string;
-    password: string;
-    passwordConfirm: string;
-    avatar: File | null;
+  username: string;
+  email: string;
+  password: string;
+  passwordConfirm: string;
+  avatar: File | null;
 }

@@ -24,6 +24,8 @@ const ChatRoom = () => {
   const currentState = useContext(CurrentStateContext);
   const messagesListRef = React.useRef<HTMLDivElement>(null);
 
+  let channelName = currentState.channel.name;
+
   useEffect(() => {
     if (messagesListRef.current) {
       messagesListRef.current.scrollTop = messagesListRef.current.scrollHeight;
@@ -36,7 +38,7 @@ const ChatRoom = () => {
 
     const fetchMessages = async () => {
       try {
-        const resultList = await PbUtils.getMessages(currentState.channelId);
+        const resultList = await PbUtils.getMessages(currentState.channel.id);
 
         if (isSubscribed) {
           setMessages(resultList);
@@ -48,12 +50,12 @@ const ChatRoom = () => {
 
     fetchMessages();
     console.log(
-      "Subscribing to message updates for channel: " + currentState.channelId,
+      "Subscribing to message updates for channel: " + currentState.channel.id,
     );
 
     const callback = (e: RecordSubscription<RecordModel>) => {
       console.log("Message updated", e);
-      if (e.record.id === currentState.channelId) {
+      if (e.record.id === currentState.channel.id) {
         fetchMessages();
       }
     };
@@ -78,7 +80,7 @@ const ChatRoom = () => {
         unsubscribe();
       }
     };
-  }, [currentState.channelId]);
+  }, [currentState.channel]);
 
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,14 +89,14 @@ const ChatRoom = () => {
         return;
       }
 
-      await PbUtils.sendMessage(newMessage, currentState.channelId);
+      await PbUtils.sendMessage(newMessage, currentState.channel.id);
 
       setNewMessage("");
 
       trackEvent({
         category: "Channels",
         action: "message-send",
-        name: currentState.channelId,
+        name: currentState.channel.id,
       });
     } catch (error) {
       console.error("Failed to send message", error);
@@ -105,7 +107,7 @@ const ChatRoom = () => {
     <>
       <ChannelsMenu />
       <div className="chatroom_container">
-        <h2>{currentState.channelName}</h2>
+        <h2>{channelName}</h2>
         <div ref={messagesListRef} className="chatroom_conversation">
           {messages.map((message) => (
             <div
@@ -140,7 +142,7 @@ const ChatRoom = () => {
             </div>
           ))}
         </div>
-        {currentState.channelId !== "" && (
+        {currentState.channel !== undefined && (
           <form className="chatroom_send_message" onSubmit={sendMessage}>
             <input
               className="chatroom_input"

@@ -1,12 +1,12 @@
-import { useMatomo } from '@datapunt/matomo-tracker-react';
-import { useContext } from 'react';
+import { useMatomo } from "@datapunt/matomo-tracker-react";
+import { useContext } from "react";
 
-import { Action, ActionType } from '../state/action';
-import { CurrentStateContext, DispatchContext } from '../state/state.context';
+import { Action, ActionType } from "../state/action";
+import { CurrentStateContext, DispatchContext } from "../state/state.context";
 
-import '../styles/menu.css';
-import { PageType } from '@/state/state';
-import { PbUtils } from '@/pb.utils';
+import "../styles/menu.css";
+import { PageType } from "@/state/state";
+import { PbUtils } from "@/pb.utils";
 
 const SideMenu = () => {
   const { trackEvent } = useMatomo();
@@ -15,8 +15,8 @@ const SideMenu = () => {
 
   const logout = () => {
     trackEvent({
-      category: 'User',
-      action: 'logout',
+      category: "User",
+      action: "logout",
       name: PbUtils.getUsername(),
     });
     PbUtils.clearAuth();
@@ -42,51 +42,58 @@ const SideMenu = () => {
   };
 
   return (
-    <div className={'menu_container' + (currentState.currentPage === PageType.CONVERSATIONS ? ' no_margin' : '')}>
+    <div
+      className={
+        "menu_container" +
+        (currentState.currentPage === PageType.CONVERSATIONS
+          ? " no_margin"
+          : "")
+      }
+    >
       <nav>
-        <div className='menu_button' role='button' >
+        <div className="menu_button" role="button">
           <button
-            aria-label='Home'
+            aria-label="Home"
             onClick={() => {
               handleMenuClick(PageType.CHANNEL_GALLERY);
             }}
           >
-            <img alt='Home' src='/homeIcon.png' />
+            <img alt="Home" src="/homeIcon.png" />
           </button>
         </div>
-        <div className='menu_button' role='button'>
+        <div className="menu_button" role="button">
           <button
-            aria-label='Conversations'
+            aria-label="Conversations"
             onClick={() => {
               handleMenuClick(PageType.CONVERSATIONS);
             }}
           >
-            <img alt='Messages' src='/messageIcon.png' />
+            <img alt="Messages" src="/messageIcon.png" />
           </button>
         </div>
-        <div className='menu_button' role='button'>
+        <div className="menu_button" role="button">
           <button
-            aria-label='Settings'
+            aria-label="Settings"
             onClick={() => {
               handleMenuClick(PageType.SETTINGS);
             }}
           >
-            <img alt='Settings' src='/settingsIcon.png' />
+            <img alt="Settings" src="/settingsIcon.png" />
           </button>
         </div>
-        <div className='menu_button' role='button'>
+        <div className="menu_button" role="button">
           <button onClick={() => logout()}>
             <svg
+              aria-hidden="true"
+              fill="currentColor"
+              viewBox="0 0 24 24"
               width={24}
-              aria-hidden='true'
-              fill='currentColor'
-              viewBox='0 0 24 24'
-              xmlns='http://www.w3.org/2000/svg'
+              xmlns="http://www.w3.org/2000/svg"
             >
               <path
-                clipRule='evenodd'
-                d='M12 2.25a.75.75 0 01.75.75v9a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM6.166 5.106a.75.75 0 010 1.06 8.25 8.25 0 1011.668 0 .75.75 0 111.06-1.06c3.808 3.807 3.808 9.98 0 13.788-3.807 3.808-9.98 3.808-13.788 0-3.808-3.807-3.808-9.98 0-13.788a.75.75 0 011.06 0z'
-                fillRule='evenodd'
+                clipRule="evenodd"
+                d="M12 2.25a.75.75 0 01.75.75v9a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM6.166 5.106a.75.75 0 010 1.06 8.25 8.25 0 1011.668 0 .75.75 0 111.06-1.06c3.808 3.807 3.808 9.98 0 13.788-3.807 3.808-9.98 3.808-13.788 0-3.808-3.807-3.808-9.98 0-13.788a.75.75 0 011.06 0z"
+                fillRule="evenodd"
               />
             </svg>
           </button>

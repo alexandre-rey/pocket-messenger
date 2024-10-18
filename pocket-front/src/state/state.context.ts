@@ -1,12 +1,17 @@
-import { createContext } from 'react';
+import { createContext } from "react";
 
-import { PageType, State } from './state';
+import { PageType, State } from "./state";
 
 export const CurrentStateContext = createContext<State>({
   currentPage: PageType.CHANNEL_GALLERY,
-  channelId: '',
-  channelName: '',
+  channel: {
+    id: "",
+    name: "",
+    isActive: false,
+    isPublic: false,
+    users: [],
+  },
   isLogged: false,
-  username: '',
+  username: "",
 });
 export const DispatchContext = createContext<React.Dispatch<any> | null>(null);

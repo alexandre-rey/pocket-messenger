@@ -20,13 +20,13 @@ const Home = () => {
   }, []);
 
   return (
-
     <div className="container">
       <SideMenu />
-      {currentState.currentPage === PageType.CHANNEL_GALLERY && <ChannelsList /> }
-      {currentState.currentPage === PageType.CONVERSATIONS && <ChatRoom /> }
-      {currentState.currentPage === PageType.SETTINGS && <Settings /> }
-      
+      {currentState.currentPage === PageType.CHANNEL_GALLERY && (
+        <ChannelsList />
+      )}
+      {currentState.currentPage === PageType.CONVERSATIONS && <ChatRoom />}
+      {currentState.currentPage === PageType.SETTINGS && <Settings />}
     </div>
   );
 };

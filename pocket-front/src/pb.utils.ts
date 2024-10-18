@@ -65,6 +65,14 @@ export class PbUtils {
     });
   }
 
+  public static async getChannel(
+    channelOverview: ChannelOverview,
+  ): Promise<Channel> {
+    return pb
+      .collection<Channel>(Collections.CHANNELS)
+      .getOne(channelOverview.id);
+  }
+
   public static async getJoinedChannels(): Promise<Channel[]> {
     const currentUsername = pb.authStore.model?.username || "";
 
@@ -170,7 +178,7 @@ export class PbUtils {
   public static async openPrivateChat(
     username: string,
     memberId: string,
-  ): Promise<{ channelName: string; channelId: string }> {
+  ): Promise<Channel> {
     const currentUsernames = [this.getUsername(), username];
     const possibleNames = [
       currentUsernames.join("-"),
@@ -184,10 +192,7 @@ export class PbUtils {
       });
 
     if (channels.length > 0) {
-      return {
-        channelName: channels[0].name,
-        channelId: channels[0].id,
-      };
+      return channels[0];
     }
 
     const newChannel = await pb
@@ -199,9 +204,6 @@ export class PbUtils {
         users: [pb.authStore.model?.id, memberId],
       });
 
-    return {
-      channelName: newChannel.name,
-      channelId: newChannel.id,
-    };
+    return newChannel;
   }
 }

@@ -16,21 +16,17 @@ const MembersList = () => {
   const [members, setMembers] = useState<Member[]>([]);
 
   useEffect(() => {
-    PbUtils.getChannelMembers(currentState.channelId).then((members) => {
+    PbUtils.getChannelMembers(currentState.channel.id).then((members) => {
       setMembers(members);
     });
-  }, [currentState.channelId]);
+  }, [currentState.channel.id]);
 
   const openPrivateChat = async (username: string, memberId: string) => {
-    const { channelName, channelId } = await PbUtils.openPrivateChat(
-      username,
-      memberId,
-    );
+    const channel = await PbUtils.openPrivateChat(username, memberId);
     const action: Action = {
       type: ActionType.SET_CURRENT_CHANNEL,
       payload: {
-        channelId: channelId,
-        channelName: channelName,
+        channel: channel,
         currentPage: PageType.CONVERSATIONS,
       },
     };

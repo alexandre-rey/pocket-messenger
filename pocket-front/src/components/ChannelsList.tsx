@@ -8,7 +8,7 @@ import { Action, ActionType } from "../state/action";
 
 import { PageType } from "@/state/state";
 import { PbUtils } from "@/pb.utils";
-import { ChannelOverview } from "@/interfaces/chat.interface";
+import { Channel, ChannelOverview } from "@/interfaces/chat.interface";
 
 const ChannelsList = () => {
   const [channels, setChannels] = useState<ChannelOverview[]>([]);
@@ -56,20 +56,21 @@ const ChannelsList = () => {
     }
   };
 
-  const joinChannel = (channelId: string, channelName: string) => {
-    PbUtils.joinChannel(channelId);
+  const joinChannel = async (channelOverview: ChannelOverview) => {
+    PbUtils.joinChannel(channelOverview.id);
     trackEvent({
       category: "Channels",
       action: "channel-join",
-      name: channelId,
+      name: channelOverview.id,
     });
+
+    const toJoinChannel: Channel = await PbUtils.getChannel(channelOverview);
 
     const action: Action = {
       type: ActionType.SET_CURRENT_CHANNEL,
       payload: {
         currentPage: PageType.CONVERSATIONS,
-        channelId: channelId,
-        channelName: channelName,
+        channel: toJoinChannel,
       },
     };
 
@@ -84,7 +85,7 @@ const ChannelsList = () => {
             key={channel.id}
             className="channel_card"
             onClick={() => {
-              joinChannel(channel.id, channel.name);
+              joinChannel(channel);
             }}
           >
             <div className="channel_card_title">

@@ -1,9 +1,10 @@
+import { Channel } from "../interfaces/chat.interface";
+
 export interface State {
   isLogged: boolean;
   username: string;
   currentPage: PageType;
-  channelId: string;
-  channelName: string;
+  channel: Channel;
 }
 
 export enum PageType {

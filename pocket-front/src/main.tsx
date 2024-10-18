@@ -4,7 +4,7 @@ import { MatomoProvider, createInstance } from "@datapunt/matomo-tracker-react";
 
 import App from "./App.tsx";
 
-import './i18n';
+import "./i18n";
 
 import "@/styles/globals.css";
 
@@ -16,7 +16,7 @@ const instance = createInstance({
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <MatomoProvider value={instance}>
-          <App />
+      <App />
     </MatomoProvider>
   </React.StrictMode>,
 );

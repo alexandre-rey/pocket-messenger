@@ -16,14 +16,13 @@ const ChannelsMenu = () => {
     PbUtils.getJoinedChannels().then((channels) => {
       setJoinedChannels(channels);
     });
-  }, [currentState.channelId]);
+  }, [currentState.channel.id]);
 
-  const handleClick = (channelId: string, channelName: string) => {
+  const handleClick = (channel: Channel) => {
     const action: Action = {
       type: ActionType.SET_CURRENT_CHANNEL,
       payload: {
-        channelId: channelId,
-        channelName: channelName,
+        channel: channel,
       },
     };
 
@@ -39,7 +38,7 @@ const ChannelsMenu = () => {
             <button
               key={channel.id}
               className="alt_menu_item"
-              onClick={() => handleClick(channel.id, channel.name)}
+              onClick={() => handleClick(channel)}
             >
               <p>{channel.name}</p>
             </button>
