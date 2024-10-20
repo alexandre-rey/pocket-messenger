@@ -17,6 +17,7 @@ function App() {
       name: "",
       isActive: false,
       isPublic: false,
+      lastMessage: "",
       users: [],
     },
     isLogged: false,

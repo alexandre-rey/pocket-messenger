@@ -11,6 +11,7 @@ export interface Channel {
   name: string;
   isActive: boolean;
   isPublic: boolean;
+  lastMessage: string;
   users: string[];
 }
 

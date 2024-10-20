@@ -8,24 +8,24 @@ import { Action, ActionType } from "@/state/action";
 import { CurrentStateContext, DispatchContext } from "@/state/state.context";
 
 const ChannelsMenu = () => {
-  const [joinedChannels, setJoinedChannels] = useState<Channel[]>([]);
+  const [currentChannels, setJoinedChannels] = useState<Channel[]>([]);
+  const [oldChannels, setOldChannels] = useState<Channel[]>([]);
   const currentState = useContext(CurrentStateContext);
   const dispatch = useContext(DispatchContext);
   const { t } = useTranslation();
 
-  useEffect(() => {
-    PbUtils.getJoinedChannels().then((channels) => {
-      setJoinedChannels(channels);
-    });
-  }, [currentState.channel.id]);
-
-
+  const newMessagesChannelIds: string [] = [];
 
   const updateChannels = () => {
     PbUtils.getJoinedChannels().then((channels) => {
+      setOldChannels(currentChannels);
       setJoinedChannels(channels);
     });
   };
+
+  useEffect(() => {
+    updateChannels();
+  }, [currentState.channel.id]);
 
   const callback = (e: RecordSubscription<RecordModel>) => {
     console.log("Message updated", e);
@@ -71,18 +71,29 @@ const ChannelsMenu = () => {
     dispatch && dispatch(action);
   };
 
+
+  for (const currentChannel of currentChannels) {
+    const lastUpdate = new Date(currentChannel.lastMessage);
+    if (!oldChannels.find((oldChannel) => oldChannel.id === currentChannel.id)
+      || oldChannels.find((oldChannel) => (oldChannel.id === currentChannel.id && new Date(oldChannel.lastMessage) > lastUpdate))) {
+      newMessagesChannelIds.push(currentChannel.id);
+    }
+  }
+
+  console.log('newMessagesChannelIds', newMessagesChannelIds);
+
   return (
     <div className="menu_container alt_menu_container">
       <div className="alt_menu_content">
         <h3>{t("channels")}</h3>
         <div className="alt_menu_list">
-          {joinedChannels.map((channel) => (
+          {currentChannels.map((channel) => (
             <button
               key={channel.id}
               className="alt_menu_item"
               onClick={() => handleClick(channel)}
             >
-              <p>{channel.name}</p>
+              <p> {newMessagesChannelIds.includes(channel.id) ? (<strong>{channel.name}</strong>) : channel.name}</p>
             </button>
           ))}
         </div>
