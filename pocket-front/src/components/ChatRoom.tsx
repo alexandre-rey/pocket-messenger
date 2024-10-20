@@ -26,6 +26,10 @@ const ChatRoom = () => {
 
   let channelName = currentState.channel.name;
 
+  if (currentState.channel.isPublic === false) {
+    channelName = channelName.replace(currentState.username, "").replace(" - ", "");
+  }
+
   useEffect(() => {
     if (messagesListRef.current) {
       messagesListRef.current.scrollTop = messagesListRef.current.scrollHeight;

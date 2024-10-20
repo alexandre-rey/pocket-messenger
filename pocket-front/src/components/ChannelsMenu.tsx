@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { RecordSubscription, UnsubscribeFunc } from "pocketbase";
+import { RecordModel, RecordSubscription, UnsubscribeFunc } from "pocketbase";
 
 import { Channel } from "@/interfaces/chat.interface";
 import { Collections, PbUtils } from "@/pb.utils";
@@ -19,37 +19,45 @@ const ChannelsMenu = () => {
     });
   }, [currentState.channel.id]);
 
+
+
   const updateChannels = () => {
     PbUtils.getJoinedChannels().then((channels) => {
       setJoinedChannels(channels);
     });
   };
 
-  const callback = async (e: RecordSubscription<Channel>) => {
+  const callback = (e: RecordSubscription<RecordModel>) => {
     console.log("Message updated", e);
-    if (
-      e.action === "create" &&
-      e.record.users.includes((await PbUtils.getUserProfile()).id)
-    ) {
-      updateChannels();
-    }
+
+    PbUtils.getUserProfile().then((user) => {
+      if (e.record.users.includes(user.id)) {
+        updateChannels();
+      }
+    });
   };
 
   useEffect(() => {
     let isSubscribed = true;
     let unsubscribe: UnsubscribeFunc | null = null;
 
-    const fetchChannels = async () => {
-      try {
-        const resultList = await PbUtils.getMessages(currentState.channel.id);
-
+    PbUtils.subscribeToCollection(Collections.CHANNELS, callback)
+      .then((unsub) => {
         if (isSubscribed) {
-          setMessages(resultList);
+          unsubscribe = unsub;
+        } else {
+          unsub();
         }
-      } catch (error) {
-        console.error("Failed to fetch messages", error);
-      }
-    };
+      })
+      .catch((error) => {
+        console.error("Failed to subscribe to channels", error);
+      });
+
+    return () => {
+      isSubscribed = false;
+      unsubscribe && unsubscribe();
+    }
+
   }, []);
 
   const handleClick = (channel: Channel) => {
