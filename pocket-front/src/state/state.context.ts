@@ -10,6 +10,7 @@ export const CurrentStateContext = createContext<State>({
     isActive: false,
     isPublic: false,
     users: [],
+    lastMessage: ""
   },
   isLogged: false,
   username: "",

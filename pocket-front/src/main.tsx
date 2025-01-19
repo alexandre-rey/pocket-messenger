@@ -9,7 +9,7 @@ import "./i18n";
 import "@/styles/globals.css";
 
 const instance = createInstance({
-  urlBase: "https://pocketmessenger.matomo.cloud",
+  urlBase: "http://193.108.55.253:5174",
   siteId: 1,
 });
 

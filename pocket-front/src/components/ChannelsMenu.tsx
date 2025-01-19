@@ -1,99 +1,129 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { RecordModel, RecordSubscription, UnsubscribeFunc } from "pocketbase";
-
+import { RecordModel, RecordSubscription } from "pocketbase";
 import { Channel } from "@/interfaces/chat.interface";
 import { Collections, PbUtils } from "@/pb.utils";
-import { Action, ActionType } from "@/state/action";
+import { ActionType } from "@/state/action";
 import { CurrentStateContext, DispatchContext } from "@/state/state.context";
 
+interface ChannelWithStatus extends Channel {
+  hasNewMessages: boolean;
+}
+
 const ChannelsMenu = () => {
-  const [currentChannels, setJoinedChannels] = useState<Channel[]>([]);
-  const [oldChannels, setOldChannels] = useState<Channel[]>([]);
+  const { t } = useTranslation();
   const currentState = useContext(CurrentStateContext);
   const dispatch = useContext(DispatchContext);
-  const { t } = useTranslation();
 
-  const newMessagesChannelIds: string [] = [];
+  // Single state for channels with their status
+  const [channels, setChannels] = useState<ChannelWithStatus[]>([]);
 
-  const updateChannels = () => {
-    PbUtils.getJoinedChannels().then((channels) => {
-      setOldChannels(currentChannels);
-      setJoinedChannels(channels);
-    });
-  };
-
-  useEffect(() => {
-    updateChannels();
-  }, [currentState.channel.id]);
-
-  const callback = (e: RecordSubscription<RecordModel>) => {
-    console.log("Message updated", e);
-
-    PbUtils.getUserProfile().then((user) => {
-      if (e.record.users.includes(user.id)) {
-        updateChannels();
-      }
-    });
-  };
-
-  useEffect(() => {
-    let isSubscribed = true;
-    let unsubscribe: UnsubscribeFunc | null = null;
-
-    PbUtils.subscribeToCollection(Collections.CHANNELS, callback)
-      .then((unsub) => {
-        if (isSubscribed) {
-          unsubscribe = unsub;
-        } else {
-          unsub();
-        }
-      })
-      .catch((error) => {
-        console.error("Failed to subscribe to channels", error);
-      });
-
-    return () => {
-      isSubscribed = false;
-      unsubscribe && unsubscribe();
+  // Load channels and set initial state
+  const fetchChannels = useCallback(async () => {
+    try {
+      const fetchedChannels = await PbUtils.getJoinedChannels();
+      setChannels(fetchedChannels.map(channel => ({
+        ...channel,
+        hasNewMessages: false
+      })));
+    } catch (error) {
+      console.error("Failed to fetch channels:", error);
     }
-
   }, []);
 
-  const handleClick = (channel: Channel) => {
-    const action: Action = {
+  // Handle channel selection
+  const handleChannelSelect = useCallback((channel: Channel) => {
+    // Update channel status
+    setChannels(current =>
+      current.map(ch => ({
+        ...ch,
+        hasNewMessages: ch.id === channel.id ? false : ch.hasNewMessages
+      }))
+    );
+
+    // Update global state
+    dispatch?.({
       type: ActionType.SET_CURRENT_CHANNEL,
-      payload: {
-        channel: channel,
-      },
+      payload: { channel }
+    });
+  }, [dispatch]);
+
+  // Handle message updates
+  const handleMessageUpdate = useCallback(async (event: RecordSubscription<RecordModel>) => {
+    try {
+      const user = await PbUtils.getUserProfile();
+      if (!event.record.users.includes(user.id)) return;
+
+      const channelId = event.record.id;
+      if (channelId === currentState.channel.id) return;
+
+      setChannels(current =>
+        current.map(channel => {
+
+          let tmpNew = channel.hasNewMessages;
+
+          if (new Date(channel.lastMessage) < new Date(event.record.lastMessage) && channel.id === channelId) {
+            tmpNew = true;
+          }
+
+          return {
+            ...channel,
+            hasNewMessages: tmpNew,
+            lastMessage: channel.id === channelId ? event.record.lastMessage : channel.lastMessage
+          }
+        })
+      );
+    } catch (error) {
+      console.error("Error handling message update:", error);
+    }
+  }, [currentState.channel.id]);
+
+  // Initial channel load
+  useEffect(() => {
+    fetchChannels();
+  }, [fetchChannels]);
+
+  // Subscribe to channel updates
+  useEffect(() => {
+    let unsubscribe: (() => void) | null = null;
+
+    const setupSubscription = async () => {
+      try {
+        unsubscribe = await PbUtils.subscribeToCollection(
+          Collections.CHANNELS,
+          handleMessageUpdate
+        );
+      } catch (error) {
+        console.error("Failed to subscribe to channels:", error);
+      }
     };
 
-    dispatch && dispatch(action);
-  };
+    setupSubscription();
 
+    return () => {
+      unsubscribe?.();
+    };
+  }, [handleMessageUpdate]);
 
-  for (const currentChannel of currentChannels) {
-    const lastUpdate = new Date(currentChannel.lastMessage);
-    if (!oldChannels.find((oldChannel) => oldChannel.id === currentChannel.id)
-      || oldChannels.find((oldChannel) => (oldChannel.id === currentChannel.id && new Date(oldChannel.lastMessage) > lastUpdate))) {
-      newMessagesChannelIds.push(currentChannel.id);
-    }
-  }
-
-  console.log('newMessagesChannelIds', newMessagesChannelIds);
+  // Refresh channels when current channel changes
+  useEffect(() => {
+    fetchChannels();
+  }, [currentState.channel.id, fetchChannels]);
 
   return (
     <div className="menu_container alt_menu_container">
       <div className="alt_menu_content">
         <h3>{t("channels")}</h3>
         <div className="alt_menu_list">
-          {currentChannels.map((channel) => (
+          {channels.map((channel) => (
             <button
               key={channel.id}
               className="alt_menu_item"
-              onClick={() => handleClick(channel)}
+              onClick={() => handleChannelSelect(channel)}
             >
-              <p> {newMessagesChannelIds.includes(channel.id) ? (<strong>{channel.name}</strong>) : channel.name}</p>
+              {channel.hasNewMessages ? (
+                <strong>{channel.name}</strong>
+              ) : channel.name}
             </button>
           ))}
         </div>
